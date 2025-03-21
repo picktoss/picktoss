@@ -6,13 +6,14 @@ import { CheckIcon, XIcon } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 
 const multipleChoiceOptionVariants = cva(
-  'relative flex items-center cursor-pointer gap-3 typo-subtitle-2-medium text-secondary bg-base-1 border-outline rounded-[16px] border py-3 px-[10px] transition-all disabled:text-disabled disabled:bg-disabled',
+  'relative flex items-center cursor-pointer gap-3 typo-subtitle-2-medium text-secondary bg-base-1 border-outline rounded-[16px] border py-3 px-[10px] transition-all',
   {
     variants: {
       state: {
         default: 'hover:bg-active',
         correct: 'bg-correct border-correct text-correct',
         incorrect: 'bg-disabled text-disabled',
+        disabled: 'text-disabled bg-disabled',
       },
     },
     defaultVariants: {
@@ -24,37 +25,42 @@ const multipleChoiceOptionVariants = cva(
 export interface MultipleChoiceOptionProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof multipleChoiceOptionVariants> {
-  label?: string
+  index: number
   content: string
-  showIcon?: boolean
+  selectable?: boolean
 }
 
 export const MultipleChoiceOption = ({
   className,
   state,
-  label,
+  index,
   content,
-  showIcon = true,
+  selectable = true,
   ...props
 }: MultipleChoiceOptionProps) => {
   return (
-    <div className={cn(multipleChoiceOptionVariants({ state, className }))} {...props}>
-      {label && (
-        <div className="flex items-center justify-center rounded-full bg-gray-100 text-gray-900 size-[32px]">
-          <span className="typo-button-3">{label}</span>
+    <div className={cn(multipleChoiceOptionVariants({ state, className }), !selectable && 'cursor-default')} {...props}>
+      {(state === 'default' || state === 'disabled') && (
+        <div
+          className={cn(
+            'flex items-center justify-center rounded-full bg-gray-100 text-gray-900 size-[32px]',
+            state === 'disabled' && 'text-disabled bg-base-3',
+          )}
+        >
+          <span className="typo-button-3">{String.fromCharCode(65 + index)}</span>
         </div>
       )}
-      <span className="typo-body-2 flex-1">{content}</span>
-      {showIcon && state === 'correct' && (
+      {state === 'correct' && (
         <div className="flex items-center justify-center rounded-full bg-green-500 text-white size-[32px]">
           <CheckIcon className="size-5" />
         </div>
       )}
-      {showIcon && state === 'incorrect' && (
+      {state === 'incorrect' && (
         <div className="flex items-center justify-center rounded-full bg-red-500 text-white size-[32px]">
           <XIcon className="size-5" />
         </div>
       )}
+      <span className="typo-body-1-medium flex-1">{content}</span>
     </div>
   )
 }

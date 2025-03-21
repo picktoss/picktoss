@@ -25,31 +25,44 @@ export default meta
 type Story = StoryObj<typeof MultipleChoiceOption>
 
 export const Default: Story = {
-  render: () => <MultipleChoiceOption label="A" content="정답 내용 입력" state="default" />,
+  args: {
+    index: 0,
+    content: '정답 내용 입력',
+    state: 'default',
+  },
 }
 
-export const Selected: Story = {
-  render: () => <MultipleChoiceOption label="A" content="정답 내용 입력" state="correct" />,
+export const Correct: Story = {
+  args: {
+    index: 0,
+    content: '정답 내용 입력',
+    state: 'correct',
+  },
 }
 
 export const Incorrect: Story = {
-  render: () => <MultipleChoiceOption label="A" content="정답 내용 입력" state="incorrect" />,
+  args: {
+    index: 0,
+    content: '정답 내용 입력',
+    state: 'incorrect',
+  },
 }
 
-export const WithoutLabel: Story = {
-  render: () => <MultipleChoiceOption content="정답 내용 입력" state="default" />,
-}
-
-export const WithoutIcon: Story = {
-  render: () => <MultipleChoiceOption label="A" content="정답 내용 입력" state="correct" showIcon={false} />,
+export const DifferentIndex: Story = {
+  args: {
+    index: 1,
+    content: 'B로 표시되는 옵션',
+    state: 'default',
+  },
 }
 
 export const AllOptions: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-full max-w-md">
-      <MultipleChoiceOption label="A" content="정답 내용 입력" state="default" />
-      <MultipleChoiceOption label="B" content="정답 내용 입력" state="correct" />
-      <MultipleChoiceOption label="C" content="정답 내용 입력" state="incorrect" />
+      <MultipleChoiceOption index={0} content="첫 번째 옵션" state="default" />
+      <MultipleChoiceOption index={1} content="두 번째 옵션" state="correct" />
+      <MultipleChoiceOption index={2} content="세 번째 옵션" state="incorrect" />
+      <MultipleChoiceOption index={3} content="disabled" state="disabled" selectable={false} />
     </div>
   ),
 }

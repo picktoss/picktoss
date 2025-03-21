@@ -62,6 +62,9 @@
 }
 
 @layer base {
+  * {
+    @apply box-border;
+  }
   body {
     @apply font-display overscroll-y-none select-none;
   }
