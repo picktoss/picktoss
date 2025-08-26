@@ -44,15 +44,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/shared/components/ui/dialog'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/shared/components/ui/drawer'
+import { Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from '@/shared/components/ui/drawer'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,7 +66,6 @@ const QuizDetailPage = () => {
 
   const [deleteDocumentDialogOpen, setDeleteDocumentDialogOpen] = useState(false)
   const { mutate: deleteDocument } = useDeleteDocument()
-  const [contentDrawerOpen, setContentDrawerOpen] = useState(false)
 
   const [selectedQuizCount, setSelectedQuizCount] = useState(20)
 
@@ -229,7 +220,7 @@ const QuizDetailPage = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="-translate-y-2">
-                {document?.isOwner && (
+                  {document?.isOwner && (
                     <DropdownMenuItem
                       right={<IcEdit />}
                       onClick={() =>
@@ -406,7 +397,7 @@ const QuizDetailPage = () => {
           <Button
             size="lg"
             left={<IcPlayFilled className="size-[20px]" />}
-            className='max-w-[400px]'
+            className="max-w-[400px]"
             disabled={isCreatingQuizSet}
             onClick={() => {
               if (!token) {
@@ -514,22 +505,6 @@ const QuizDetailPage = () => {
           )}
         </div>
       </HeaderOffsetLayout>
-
-      {/* TODO: Markdown Viewer */}
-      {/* 원본 노트 drawer */}
-      <Drawer open={contentDrawerOpen} onOpenChange={setContentDrawerOpen}>
-        <DrawerContent height="full">
-          <DrawerHeader>
-            <DrawerTitle>원본 노트</DrawerTitle>
-            <DrawerDescription>
-              {document?.createdAt.split('T')[0].split('-').join('.')} 등록 / {document?.content?.length}자
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="mt-5 flex-1 overflow-y-scroll pb-10">
-            <p>{document?.content}</p>
-          </div>
-        </DrawerContent>
-      </Drawer>
 
       {/* 문서 삭제 confirm 모달 */}
       <SystemDialog

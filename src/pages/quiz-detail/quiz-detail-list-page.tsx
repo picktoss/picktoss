@@ -24,7 +24,6 @@ import {
   IcDownload,
   IcEdit,
   IcKebab,
-  IcNote,
   IcReview,
 } from '@/shared/assets/icon'
 import { BackButton } from '@/shared/components/buttons/back-button'
@@ -48,10 +47,10 @@ import { Switch } from '@/shared/components/ui/switch'
 import { Text } from '@/shared/components/ui/text'
 import { TextButton } from '@/shared/components/ui/text-button'
 import { Textarea } from '@/shared/components/ui/textarea'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { cn } from '@/shared/lib/utils'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip'
 
 const NoteDetailPage = () => {
   const { trackEvent } = useAmplitude()
@@ -313,7 +312,7 @@ const NoteDetailPage = () => {
                     </button>
                   )}
                 </TooltipTrigger>
-                <TooltipContent align="end" side="bottom" color='inverse'>
+                <TooltipContent align="end" side="bottom" color="inverse">
                   데일리에서 매일 풀 수 있어요
                 </TooltipContent>
               </Tooltip>
@@ -341,19 +340,19 @@ const NoteDetailPage = () => {
                   </DropdownMenuItem>
                   {document?.isOwner && (
                     <>
-                  <DropdownMenuItem right={<IcNote />} onClick={() => setContentDrawerOpen(true)}>
+                      {/* <DropdownMenuItem right={<IcNote />} onClick={() => setContentDrawerOpen(true)}>
                     원본 문서
-                  </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="text-red-500"
-                      right={<IcDelete className="text-icon-critical" />}
-                      onClick={() => {
-                        trackEvent('library_detail_delete_click')
-                        setDeleteDocumentDialogOpen(true)
-                      }}
-                    >
-                      퀴즈 삭제
-                    </DropdownMenuItem>
+                  </DropdownMenuItem> */}
+                      <DropdownMenuItem
+                        className="text-red-500"
+                        right={<IcDelete className="text-icon-critical" />}
+                        onClick={() => {
+                          trackEvent('library_detail_delete_click')
+                          setDeleteDocumentDialogOpen(true)
+                        }}
+                      >
+                        퀴즈 삭제
+                      </DropdownMenuItem>
                     </>
                   )}
                 </DropdownMenuContent>
@@ -469,22 +468,21 @@ const NoteDetailPage = () => {
             ))}
           </div>
         </div>
-
       </HeaderOffsetLayout>
-        {isScrolled && (
-          <button
-            onClick={() => {
-              scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-            }}
-            disabled={!canScroll}
-            className={cn(
-              'shadow-md border border-outline bg-base-1 text-icon-secondary rounded-full size-[40px] absolute z-50 flex-center right-[20px] bottom-[65px]',
-              !canScroll && 'opacity-50 pointer-events-none'
-            )}
-          >
-            <IcArrowUp className='size-5' />
-          </button>
-        )}
+      {isScrolled && (
+        <button
+          onClick={() => {
+            scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          disabled={!canScroll}
+          className={cn(
+            'shadow-md border border-outline bg-base-1 text-icon-secondary rounded-full size-[40px] absolute z-50 flex-center right-[20px] bottom-[65px]',
+            !canScroll && 'opacity-50 pointer-events-none',
+          )}
+        >
+          <IcArrowUp className="size-5" />
+        </button>
+      )}
 
       {/* 문제 수정 drawer */}
       <AlertDrawer

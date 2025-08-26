@@ -50,9 +50,6 @@ export const AppRouter = () => {
         <Route element={<RootLayout />}>
           <Route element={<RewardLayout />}>
             <Route element={<AuthLayout />}>
-              {/* 404 */}
-              <Route path="*" element={<NotFound />} />
-
               {/* PC에서는 항상 접근 가능하지만 모바일에서는 PWA로만 접근 가능하게 하는 Layout */}
               <Route element={<PWAOnlyMobileLayout />}>
                 {/* Home */}
@@ -126,6 +123,10 @@ export const AppRouter = () => {
             <Route path={RoutePath.login} element={<LoginPage />} />
           </Route>
         </Route>
+
+        <Route path="/ads.txt" />
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
