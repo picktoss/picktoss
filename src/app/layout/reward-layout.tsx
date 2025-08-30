@@ -8,11 +8,13 @@ import RewardDialogForInvitee from '@/features/invite/ui/reward-dialog-for-invit
 import RewardDialogForInviter from '@/features/invite/ui/reward-dialog-for-inviter'
 
 import { useCheckInviteCodeBySignUp } from '@/entities/auth/api/hooks'
+import { useUser } from '@/entities/member/api/hooks'
 
 import { getLocalStorageItem } from '@/shared/lib/storage/lib'
 
 export const RewardLayout = () => {
   const token = useStore(useAuthStore, (state) => state.token)
+  const { data: user } = useUser()
 
   // 초대 코드 보상 관련
   const storageInviteCode = getLocalStorageItem('inviteCode')
@@ -49,8 +51,13 @@ export const RewardLayout = () => {
         open={openRewardForInvitee}
         onOpenChange={setOpenRewardForInvitee}
         inviteCode={inviteCode ?? ''}
+        userName={user?.name ?? ''}
       />
-      <RewardDialogForInviter open={openRewardForInviter} onOpenChange={setOpenRewardForInviter} />
+      <RewardDialogForInviter
+        open={openRewardForInviter}
+        onOpenChange={setOpenRewardForInviter}
+        userName={user?.name ?? ''}
+      />
 
       <Outlet />
     </>
