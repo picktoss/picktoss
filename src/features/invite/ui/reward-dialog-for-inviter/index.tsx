@@ -8,7 +8,15 @@ import { Button } from '@/shared/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/shared/components/ui/dialog'
 import { Text } from '@/shared/components/ui/text'
 
-const RewardDialogForInviter = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+const RewardDialogForInviter = ({
+  open,
+  onOpenChange,
+  userName,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  userName: string
+}) => {
   const queryClient = useQueryClient()
   const { mutate: confirmInvite } = useConfirmInviteCodeBySignUp()
 
@@ -38,7 +46,7 @@ const RewardDialogForInviter = ({ open, onOpenChange }: { open: boolean; onOpenC
           <div className="flex flex-col gap-[8px]">
             <DialogTitle className="typo-h4 text-center">친구 초대 보상 도착</DialogTitle>
             <DialogDescription className="typo-subtitle-2-medium text-sub text-center">
-              초대해주신 픽토스님께 <br />
+              초대해주신 {userName}님께 <br />
               보상으로 별{' '}
               <Text as={'span'} typo="subtitle-2-medium" color="accent">
                 50개
