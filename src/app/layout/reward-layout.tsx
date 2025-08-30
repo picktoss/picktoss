@@ -51,8 +51,13 @@ export const RewardLayout = () => {
         open={openRewardForInvitee}
         onOpenChange={setOpenRewardForInvitee}
         inviteCode={inviteCode ?? ''}
+        userName={user?.name ?? ''}
       />
-      <RewardDialogForInviter open={openRewardForInviter} onOpenChange={setOpenRewardForInviter} />
+      <RewardDialogForInviter
+        open={openRewardForInviter}
+        onOpenChange={setOpenRewardForInviter}
+        userName={user?.name ?? ''}
+      />
 
       <Outlet />
     </>
