@@ -27,6 +27,7 @@ const RewardDialogForInvitee = ({
       {
         onSuccess: () => {
           removeLocalStorageItem('inviteCode')
+          removeLocalStorageItem('checkRewardDialog')
           onOpenChange(false)
         },
         onError: (error) => {

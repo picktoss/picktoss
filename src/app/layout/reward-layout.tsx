@@ -19,7 +19,10 @@ export const RewardLayout = () => {
 
   // 초대 코드 보상 관련
   const storageInviteCode = getLocalStorageItem('inviteCode')
+  const storageCheckReward = getLocalStorageItem('checkRewardDialog')
+
   const [inviteCode, setInviteCode] = useState(storageInviteCode)
+  const [checkRewardDialog, setCheckRewardDialog] = useState(storageCheckReward)
   const [openRewardForInvitee, setOpenRewardForInvitee] = useState(false)
   const [openRewardForInviter, setOpenRewardForInviter] = useState(false)
   const { data: hasInviteeData } = useCheckInviteCodeBySignUp({ enabled: !!token })
@@ -27,17 +30,19 @@ export const RewardLayout = () => {
   useEffect(() => {
     if (token) {
       const storageInviteCode = getLocalStorageItem('inviteCode')
+      const storageCheckReward = getLocalStorageItem('checkRewardDialog')
       setInviteCode(storageInviteCode)
+      setCheckRewardDialog(storageCheckReward)
     }
   }, [token])
 
   useEffect(() => {
-    if (inviteCode && isSignUp) {
-      console.log(isSignUp, inviteCode)
+    if (inviteCode && (isSignUp || checkRewardDialog)) {
+      console.log('isSignUp: ', isSignUp, ' / checkRewardDialog: ', checkRewardDialog, ' / inviteCode: ', inviteCode)
 
       setOpenRewardForInvitee(true)
     }
-  }, [inviteCode, isSignUp])
+  }, [inviteCode, isSignUp, checkRewardDialog])
 
   useEffect(() => {
     if (hasInviteeData?.type === 'READY') {
