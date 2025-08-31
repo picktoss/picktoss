@@ -1,15 +1,4 @@
 {
-  "headers": [
-    {
-      "source": "/ads.txt",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain"
-        }
-      ]
-    }
-  ],
   "rewrites": [
     {
       "source": "/quiz-detail/:id",
@@ -23,7 +12,7 @@
       "destination": "https://app.picktoss.com/quiz-detail/:id"
     },
     {
-      "source": "/:path((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|favicon\\.ico).*)",
+      "source": "/:path((?!api/).*)",
       "destination": "/index.html"
     }
   ]
