@@ -10,7 +10,7 @@ import RewardDialogForInviter from '@/features/invite/ui/reward-dialog-for-invit
 import { useCheckInviteCodeBySignUp } from '@/entities/auth/api/hooks'
 import { useUser } from '@/entities/member/api/hooks'
 
-import { getLocalStorageItem } from '@/shared/lib/storage/lib'
+import { getLocalStorageItem, removeLocalStorageItem } from '@/shared/lib/storage/lib'
 
 export const RewardLayout = () => {
   const token = useStore(useAuthStore, (state) => state.token)
@@ -25,6 +25,7 @@ export const RewardLayout = () => {
   const [checkRewardDialog, setCheckRewardDialog] = useState(storageCheckReward)
   const [openRewardForInvitee, setOpenRewardForInvitee] = useState(false)
   const [openRewardForInviter, setOpenRewardForInviter] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false) // 초기화 상태 추가
   const { data: hasInviteeData } = useCheckInviteCodeBySignUp({ enabled: !!token })
 
   useEffect(() => {
@@ -33,16 +34,25 @@ export const RewardLayout = () => {
       const storageCheckReward = getLocalStorageItem('checkRewardDialog')
       setInviteCode(storageInviteCode)
       setCheckRewardDialog(storageCheckReward)
+      setIsInitialized(true) // 초기화 완료 표시
     }
   }, [token])
 
   useEffect(() => {
+    // 초기화가 완료되지 않았다면 실행하지 않음
+    if (!isInitialized) {
+      return
+    }
+
     if (inviteCode && (isSignUp || checkRewardDialog)) {
       console.log('isSignUp: ', isSignUp, ' / checkRewardDialog: ', checkRewardDialog, ' / inviteCode: ', inviteCode)
 
       setOpenRewardForInvitee(true)
+    } else {
+      removeLocalStorageItem('inviteCode')
+      removeLocalStorageItem('checkRewardDialog')
     }
-  }, [inviteCode, isSignUp, checkRewardDialog])
+  }, [inviteCode, isSignUp, checkRewardDialog, isInitialized])
 
   useEffect(() => {
     if (hasInviteeData?.type === 'READY') {
