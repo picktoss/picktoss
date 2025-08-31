@@ -16,6 +16,7 @@ export const useGLogin = (onSuccess?: () => void) => {
   const router = useRouter()
   const location = useLocation()
   const setToken = useAuthStore((state) => state.setToken)
+  const setIsSignUp = useAuthStore((state) => state.setIsSignUp)
   const { isPWA } = usePWA()
 
   const { mutateAsync: loginMutation } = useLogin()
@@ -31,6 +32,7 @@ export const useGLogin = (onSuccess?: () => void) => {
           },
         })
         setToken(result.accessToken)
+        setIsSignUp(result.signUp)
 
         const defaultPath = !isPWA && isMobile ? '/explore' : '/'
 
