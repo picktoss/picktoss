@@ -14,6 +14,7 @@ import { getLocalStorageItem } from '@/shared/lib/storage/lib'
 
 export const RewardLayout = () => {
   const token = useStore(useAuthStore, (state) => state.token)
+  const isSignUp = useStore(useAuthStore, (state) => state.isSignUp)
   const { data: user } = useUser()
 
   // 초대 코드 보상 관련
@@ -31,12 +32,12 @@ export const RewardLayout = () => {
   }, [token])
 
   useEffect(() => {
-    if (inviteCode) {
-      console.log(inviteCode)
+    if (inviteCode && isSignUp) {
+      console.log(isSignUp, inviteCode)
 
       setOpenRewardForInvitee(true)
     }
-  }, [inviteCode])
+  }, [inviteCode, isSignUp])
 
   useEffect(() => {
     if (hasInviteeData?.type === 'READY') {
