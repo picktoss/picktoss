@@ -21,6 +21,8 @@ export const StorageKey = {
   notificationPermissionComplete: 'notificationPermissionComplete',
   /** 초대코드로 회원가입 시 */
   inviteCode: 'inviteCode',
+  /** 튜토리얼 새로고침 표시 여부 */
+  tutorialRefreshShown: 'tutorialRefreshShown',
 } as const
 
 /**
@@ -44,4 +46,5 @@ export interface StorageSchema {
   }
   [StorageKey.notificationPermissionComplete]: string
   [StorageKey.inviteCode]: string
+  [StorageKey.tutorialRefreshShown]: boolean
 }
