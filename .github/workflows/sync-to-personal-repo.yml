@@ -17,8 +17,11 @@ jobs:
           ref: feat/localization
           persist-credentials: false
 
-      - name: Ensure diff
-        run: date +%s > ./.sync-timestamp
+      - name: Install mustache (to update the date)
+        run: apk add ruby && gem install mustache
+
+      - name: creates output
+        run: sh ./build.sh
 
       - name: Pushes to another repository
         id: push_directory
@@ -26,7 +29,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.PERSONAL_REPO_TOKEN_FOR_LOCALIZATION }}
         with:
-          source-directory: '.'
+          source-directory: 'output'
           destination-github-username: 'rabyeoljji'
           destination-repository-name: 'picktoss-localization'
           user-email: ${{ secrets.EMAIL_FOR_LOCALIZATION }}
