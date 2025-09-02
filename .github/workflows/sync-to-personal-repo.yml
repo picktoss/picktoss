@@ -17,6 +17,9 @@ jobs:
           ref: feat/localization
           persist-credentials: false
 
+      - name: Ensure diff
+        run: date +%s > .sync-timestamp
+
       - name: Pushes to another repository
         id: push_directory
         uses: cpina/github-action-push-to-another-repository@main
