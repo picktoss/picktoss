@@ -8,18 +8,26 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source branch
-        uses: actions/checkout@v4
+      - name: Check Git version
+        run: git --version
+
+      - uses: actions/checkout@v4
         with:
           ref: feat/localization
 
-      - name: Push to personal repo
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Pushes to another repository
+        id: push_directory
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.PERSONAL_REPO_TOKEN_FOR_LOCALIZATION }}
+        with:
+          source-directory: '.'
+          destination-github-username: 'rabyeoljji'
+          destination-repository-name: 'picktoss-localization'
+          user-email: ${{ secrets.EMAIL_FOR_LOCALIZATION }}
+          commit-message: ${{ github.event.commits[0].message }}
+          target-branch: main
 
-          git remote add personal https://x-access-token:${{ secrets.PERSONAL_REPO_TOKEN_FOR_LOCALIZATION }}@github.com/rabyeoljji/picktoss-localization.git
-
-          git push personal HEAD:main --force
+      - name: Test get variable exported by push-to-another-repository
+        run: echo $DESTINATION_CLONED_DIRECTORY
