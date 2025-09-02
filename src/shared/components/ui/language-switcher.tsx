@@ -2,6 +2,7 @@ import { useTranslation } from '@/shared/locales/use-translation'
 
 import { Button } from './button'
 
+// 임시 언어 변환 스위치
 export const LanguageSwitcher = () => {
   const { currentLanguage, changeLanguage } = useTranslation()
 
