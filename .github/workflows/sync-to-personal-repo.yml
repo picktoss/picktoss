@@ -12,7 +12,7 @@ jobs:
       - name: Check Git version
         run: git --version
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
         with:
           ref: feat/localization
 
