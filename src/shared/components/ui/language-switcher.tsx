@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useTranslation } from '@/shared/locales/use-translation'
 
 import { Button } from './button'
