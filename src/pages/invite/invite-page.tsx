@@ -17,7 +17,7 @@ import { useRouter } from '@/shared/lib/router'
 
 const InvitePage = () => {
   const INVITE_REWARD = 50
-  const KONKUK_REWARD = 1000
+  const SPECIAL_REWARD = 1000
 
   const { inviteCode } = useParams()
   const router = useRouter()
@@ -27,7 +27,7 @@ const InvitePage = () => {
   const { data: inviteUserData } = useGetInviteMemberInfo(inviteCode ?? '')
   const { mutate: verifyInviteCode, isPending } = useVerifyInviteCode()
 
-  const isKonKuk = inviteCode === 'KONKUK'
+  const isSpecial = inviteCode === 'KONKUK' || inviteCode === 'SANGMYUNG'
 
   useEffect(() => {
     if (!inviteCode) return
@@ -81,7 +81,7 @@ const InvitePage = () => {
                   <Text typo="h2">
                     픽토스 초대와{' '}
                     <Text as={'span'} typo="h2" color="accent">
-                      별 {isKonKuk ? KONKUK_REWARD : INVITE_REWARD}개!
+                      별 {isSpecial ? SPECIAL_REWARD : INVITE_REWARD}개!
                     </Text>
                   </Text>
                 </div>

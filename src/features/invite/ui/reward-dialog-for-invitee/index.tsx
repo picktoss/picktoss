@@ -17,7 +17,7 @@ const RewardDialogForInvitee = ({
   inviteCode: string
   userName: string
 }) => {
-  const isKonKuk = inviteCode === 'KONKUK'
+  const isSpecial = inviteCode === 'KONKUK' || inviteCode === 'SANGMYUNG'
 
   const { mutate: rewardForInviteCode } = useRewardForInviteCode()
 
@@ -39,8 +39,8 @@ const RewardDialogForInvitee = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {isKonKuk ? (
-        <RewardDialogContentForKonKuk userName={userName} handleReward={handleReward} />
+      {isSpecial ? (
+        <RewardDialogContentForSpecial userName={userName} handleReward={handleReward} />
       ) : (
         <RewardDialogContentForInvitee userName={userName} handleReward={handleReward} />
       )}
@@ -86,7 +86,7 @@ const RewardDialogContentForInvitee = ({ userName, handleReward }: { userName: s
   )
 }
 
-const RewardDialogContentForKonKuk = ({ userName, handleReward }: { userName: string; handleReward: () => void }) => {
+const RewardDialogContentForSpecial = ({ userName, handleReward }: { userName: string; handleReward: () => void }) => {
   return (
     <DialogContent
       onPointerDownOutside={(e) => e.preventDefault()}
