@@ -25,6 +25,8 @@ export const StorageKey = {
   tutorialRefreshShown: 'tutorialRefreshShown',
   /** 보상 표시 여부 - 회원가입 시 true */
   checkRewardDialog: 'checkRewardDialog',
+  /** 로그인 전 현재 페이지 URL */
+  redirectUrl: 'redirectUrl',
 } as const
 
 /**
@@ -50,4 +52,5 @@ export interface StorageSchema {
   [StorageKey.inviteCode]: string
   [StorageKey.tutorialRefreshShown]: boolean
   [StorageKey.checkRewardDialog]: boolean
+  [StorageKey.redirectUrl]: string
 }

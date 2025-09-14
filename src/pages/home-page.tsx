@@ -42,6 +42,7 @@ type Quiz = GetAllQuizzesResponse['quizzes'][number]
 
 const HomePage = () => {
   const router = useRouter()
+  const [redirectUrl, _, removeRedirectUrl] = useLocalStorage(StorageKey.redirectUrl, '')
   const { trackEvent } = useAmplitude()
 
   // 온보딩 관련
@@ -256,6 +257,19 @@ const HomePage = () => {
       setUserLoaded(true)
     }
   }, [userLoaded, refetchUser])
+
+  useEffect(() => {
+    if (!userLoaded || user) {
+      return
+    }
+
+    if (redirectUrl) {
+      removeRedirectUrl()
+      router.replace(redirectUrl as any, {
+        params: [],
+      })
+    }
+  }, [userLoaded, user])
 
   if (!user) {
     return null

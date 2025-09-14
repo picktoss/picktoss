@@ -54,11 +54,13 @@ import {
 import { Text } from '@/shared/components/ui/text'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useRouter } from '@/shared/lib/router'
-import { useSessionStorage } from '@/shared/lib/storage'
+import { StorageKey, useLocalStorage, useSessionStorage } from '@/shared/lib/storage'
 
 const QuizDetailPage = () => {
   const { trackEvent } = useAmplitude()
   const router = useRouter()
+
+  const [_, setRedirectUrl] = useLocalStorage(StorageKey.redirectUrl, '')
 
   const { noteId } = useParams()
 
@@ -529,7 +531,16 @@ const QuizDetailPage = () => {
         }}
       />
 
-      <LoginDialog open={isLoginOpen} onOpenChange={setIsLoginOpen} />
+      <LoginDialog
+        open={isLoginOpen}
+        onOpenChange={setIsLoginOpen}
+        onClickLogin={() => {
+          if (!token) {
+            setRedirectUrl(window.location.pathname + window.location.search)
+          }
+          router.push('/login')
+        }}
+      />
     </div>
   )
 }

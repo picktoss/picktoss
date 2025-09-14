@@ -3,7 +3,15 @@ import { Button } from '@/shared/components/ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from '@/shared/components/ui/dialog'
 import { useRouter } from '@/shared/lib/router'
 
-const LoginDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+const LoginDialog = ({
+  open,
+  onOpenChange,
+  onClickLogin,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onClickLogin?: () => void
+}) => {
   const router = useRouter()
 
   return (
@@ -24,7 +32,13 @@ const LoginDialog = ({ open, onOpenChange }: { open: boolean; onOpenChange: (ope
         </div>
 
         <div className="w-full flex flex-col gap-[24px]">
-          <Button onClick={() => router.push('/login')} className="w-full">
+          <Button
+            onClick={() => {
+              onClickLogin?.()
+              router.push('/login')
+            }}
+            className="w-full"
+          >
             로그인
           </Button>
           <DialogClose asChild>
