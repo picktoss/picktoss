@@ -50,43 +50,40 @@ export const AppRouter = () => {
         <Route element={<RootLayout />}>
           <Route element={<RewardLayout />}>
             <Route element={<AuthLayout />}>
-              {/* PC에서는 항상 접근 가능하지만 모바일에서는 PWA로만 접근 가능하게 하는 Layout */}
-              <Route element={<PWAOnlyMobileLayout />}>
-                {/* Home */}
-                <Route path={RoutePath.root} element={<HomePage />} />
-                <Route path={RoutePath.search} element={<SearchPage />} />
+              {/* Home */}
+              <Route path={RoutePath.root} element={<HomePage />} />
+              <Route path={RoutePath.search} element={<SearchPage />} />
 
-                {/* Note Create 노트 생성 */}
-                <Route path={RoutePath.noteCreate} element={<NoteCreatePage />} />
+              {/* Note Create 노트 생성 */}
+              <Route path={RoutePath.noteCreate} element={<NoteCreatePage />} />
 
-                {/* Library */}
-                <Route path={RoutePath.library}>
-                  <Route index element={<LibraryPage />} />
-                  <Route path={RoutePath.libraryNoteQuiz} element={<NoteQuizPage />} />
-                  <Route path={RoutePath.libraryNoteEdit} element={<NoteEditPage />} />
-                </Route>
+              {/* Library */}
+              <Route path={RoutePath.library}>
+                <Route index element={<LibraryPage />} />
+                <Route path={RoutePath.libraryNoteQuiz} element={<NoteQuizPage />} />
+                <Route path={RoutePath.libraryNoteEdit} element={<NoteEditPage />} />
+              </Route>
 
-                {/* Account */}
-                <Route path={RoutePath.account}>
-                  <Route index element={<AccountPage />} />
-                  <Route path={RoutePath.accountInfo} element={<AccountInfoPage />} />
-                  <Route path={RoutePath.accountDailyQuizAttendance} element={<DailyQuizAttendancePage />} />
-                  <Route path={RoutePath.accountQuizAnalysis} element={<QuizAnalysisPage />} />
-                  <Route path={RoutePath.accountQuizRecord} element={<QuizRecordPage />} />
-                  <Route path={RoutePath.accountQuizRecordDailyDetail} element={<QuizRecordDailyDetailPage />} />
-                  <Route path={RoutePath.accountQuizRecordSetDetail} element={<QuizRecordSetDetailPage />} />
-                  <Route path={RoutePath.accountNotificationConfig} element={<NotificationConfigPage />} />
-                  <Route path={RoutePath.accountMyStar} element={<MyStarPage />} />
-                  <Route path={RoutePath.accountStarHistory} element={<StarHistoryPage />} />
-                  <Route path={RoutePath.accountPaymentHistory} element={<PaymentHistoryPage />} />
-                  <Route path={RoutePath.accountNotice} element={<NoticePage />} />
-                  <Route path={RoutePath.accountContact} element={<ContactPage />} />
-                  <Route path={RoutePath.accountFaq} element={<FaQPage />} />
-                  <Route path={RoutePath.accountPolicy} element={<PolicyPage />} />
-                  <Route path={RoutePath.accountWithdraw} element={<WithdrawPage />} />
-                  <Route path={RoutePath.accountFeedback} element={<FeedbackPage />} />
-                  <Route path={RoutePath.accountFeedbackComplete} element={<FeedbackCompletePage />} />
-                </Route>
+              {/* Account */}
+              <Route path={RoutePath.account}>
+                <Route index element={<AccountPage />} />
+                <Route path={RoutePath.accountInfo} element={<AccountInfoPage />} />
+                <Route path={RoutePath.accountDailyQuizAttendance} element={<DailyQuizAttendancePage />} />
+                <Route path={RoutePath.accountQuizAnalysis} element={<QuizAnalysisPage />} />
+                <Route path={RoutePath.accountQuizRecord} element={<QuizRecordPage />} />
+                <Route path={RoutePath.accountQuizRecordDailyDetail} element={<QuizRecordDailyDetailPage />} />
+                <Route path={RoutePath.accountQuizRecordSetDetail} element={<QuizRecordSetDetailPage />} />
+                <Route path={RoutePath.accountNotificationConfig} element={<NotificationConfigPage />} />
+                <Route path={RoutePath.accountMyStar} element={<MyStarPage />} />
+                <Route path={RoutePath.accountStarHistory} element={<StarHistoryPage />} />
+                <Route path={RoutePath.accountPaymentHistory} element={<PaymentHistoryPage />} />
+                <Route path={RoutePath.accountNotice} element={<NoticePage />} />
+                <Route path={RoutePath.accountContact} element={<ContactPage />} />
+                <Route path={RoutePath.accountFaq} element={<FaQPage />} />
+                <Route path={RoutePath.accountPolicy} element={<PolicyPage />} />
+                <Route path={RoutePath.accountWithdraw} element={<WithdrawPage />} />
+                <Route path={RoutePath.accountFeedback} element={<FeedbackPage />} />
+                <Route path={RoutePath.accountFeedbackComplete} element={<FeedbackCompletePage />} />
               </Route>
             </Route>
 
