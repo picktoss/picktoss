@@ -161,7 +161,9 @@ const QuizDetailPage = () => {
           setIsBookmarked(document.isBookmarked)
           setBookmarkCount(document.bookmarkCount)
         },
-        onSettled: () => setIsBookmarkProcessing(false),
+        onSettled: () => {
+          setIsBookmarkProcessing(false)
+        },
       },
     )
   }
@@ -514,7 +516,7 @@ const QuizDetailPage = () => {
         onOpenChange={setDeleteDocumentDialogOpen}
         title="퀴즈를 삭제하시겠어요?"
         content={
-          <Text typo="body-1-medium" color="sub">
+          <Text typo="body-1-medium" color="sub" className="break-normal whitespace-pre-line">
             선택한 퀴즈와{' '}
             <Text as="span" typo="body-1-medium" color="incorrect">
               {`${document?.quizzes.length}개의 문제`}

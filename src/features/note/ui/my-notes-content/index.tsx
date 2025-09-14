@@ -296,7 +296,7 @@ const MyNotesContent = ({
         onOpenChange={setOpenDelete}
         title="퀴즈를 삭제하시겠어요?"
         content={
-          <Text typo="body-1-medium" color="sub">
+          <Text typo="body-1-medium" color="sub" className="break-normal whitespace-pre-line">
             선택한 퀴즈와{' '}
             <Text as="span" typo="body-1-medium" color="incorrect">
               {`${selectedTotalQuizCount}개의 문제`}
@@ -364,7 +364,7 @@ const NeedReleaseDialog = ({
             <DialogTitle>
               <Text typo="h4">퀴즈 공개가 필요해요</Text>
             </DialogTitle>
-            <Text typo="subtitle-2-medium" color="sub">
+            <Text typo="subtitle-2-medium" color="sub" className="break-words text-center">
               픽토스에 퀴즈가 공개된 상태여야 <br />
               공유할 수 있어요
             </Text>
@@ -389,10 +389,10 @@ const NeedReleaseDialog = ({
         onOpenChange={setOpenNeedMoreQuiz}
         title="문제를 더 생성해주세요"
         content={
-          <>
+          <div className="break-words text-center">
             퀴즈에 포함된 문제가 <br />
             5개 이상이어야 공유할 수 있어요
-          </>
+          </div>
         }
         cancelLabel="취소하기"
         confirmLabel="생성하기"
