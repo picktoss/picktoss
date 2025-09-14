@@ -36,7 +36,6 @@ import QuizDetailPage from '@/pages/quiz-detail/quiz-detail-page'
 import SearchPage from '@/pages/search-page'
 
 import { AuthLayout } from '@/app/layout/auth-layout'
-import { PWAOnlyMobileLayout } from '@/app/layout/pwa-only-mobile-layout'
 import { RewardLayout } from '@/app/layout/reward-layout'
 import { RootLayout } from '@/app/layout/root-layout'
 import NotFound from '@/app/not-found'
@@ -98,10 +97,8 @@ export const AppRouter = () => {
               <Route path={RoutePath.exploreSearch} element={<ExploreSearchPage />} />
 
               <Route element={<AuthLayout />}>
-                <Route element={<PWAOnlyMobileLayout />}>
-                  <Route path={RoutePath.exploreComplain} element={<ExploreComplainPage />} />
-                  <Route path={RoutePath.exploreRelease} element={<ExploreReleasePage />} />
-                </Route>
+                <Route path={RoutePath.exploreComplain} element={<ExploreComplainPage />} />
+                <Route path={RoutePath.exploreRelease} element={<ExploreReleasePage />} />
               </Route>
             </Route>
 
