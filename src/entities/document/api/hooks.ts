@@ -222,6 +222,8 @@ export const useGetPublicDocuments = ({
       const nextPage = allPages.length
       return nextPage < lastPage.totalPages ? nextPage : undefined
     },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   })
 
   return {
