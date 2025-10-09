@@ -16,10 +16,11 @@ const NotificationConfigPage = () => {
     <>
       <Header left={<BackButton />} title="알림" className="px-[8px]" />
 
-      <HeaderOffsetLayout className="px-[16px] h-full">
-        <EmptyNotification />
+      <HeaderOffsetLayout className="size-full overscroll-none">
+        <div className="size-full overflow-y-auto px-[16px]">
+          <EmptyNotification />
 
-        {/* {isLoading && <div className="size-full flex-center">is Loading...</div>}
+          {/* {isLoading && <div className="size-full flex-center">is Loading...</div>}
 
         {!data?.notifications || data.notifications.length === 0 ? (
           <EmptyNotification />
@@ -39,6 +40,7 @@ const NotificationConfigPage = () => {
             </Text>
           </>
         )} */}
+        </div>
       </HeaderOffsetLayout>
     </>
   )
