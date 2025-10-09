@@ -113,140 +113,142 @@ const AccountInfoPage = () => {
     <>
       <Header left={<BackButton />} title="계정 정보" />
 
-      <HeaderOffsetLayout className="h-full flex flex-col overflow-x-hidden px-[16px] justify-between">
-        <div className="w-full flex flex-col">
-          <div className="flex-center w-full pb-[44px] pt-[24px]">
-            <div className="relative">
-              <div className="flex-center relative size-[96px] overflow-hidden rounded-full bg-base-3">
-                {imageUrl ? (
-                  <img src={imageUrl} alt="" className="object-cover" />
-                ) : (
-                  <IcMy className="size-[56px] text-icon-sub" />
-                )}
+      <HeaderOffsetLayout className="size-full overscroll-none">
+        <div className="size-full overflow-y-auto px-[16px] flex flex-col justify-between">
+          <div className="w-full flex flex-col">
+            <div className="flex-center w-full pb-[44px] pt-[24px]">
+              <div className="relative">
+                <div className="flex-center relative size-[96px] overflow-hidden rounded-full bg-base-3">
+                  {imageUrl ? (
+                    <img src={imageUrl} alt="" className="object-cover" />
+                  ) : (
+                    <IcMy className="size-[56px] text-icon-sub" />
+                  )}
+                </div>
+                {/* 이미지 등록 버튼 */}
+                <input
+                  type="file"
+                  name="file"
+                  id="userImage"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleChangeImage}
+                />
+                <label
+                  htmlFor="userImage"
+                  className="flex-center absolute z-10 bottom-0 right-0 size-[32px] cursor-pointer rounded-full border border-outline bg-base-1"
+                >
+                  <IcCamera className="size-[16px]" />
+                </label>
               </div>
-              {/* 이미지 등록 버튼 */}
-              <input
-                type="file"
-                name="file"
-                id="userImage"
-                className="hidden"
-                accept="image/*"
-                onChange={handleChangeImage}
-              />
-              <label
-                htmlFor="userImage"
-                className="flex-center absolute z-10 bottom-0 right-0 size-[32px] cursor-pointer rounded-full border border-outline bg-base-1"
+            </div>
+
+            <div className="flex flex-col gap-[32px]">
+              <button
+                type="button"
+                onClick={() => setNameDialogOpen(true)}
+                className="flex w-full items-center justify-between"
               >
-                <IcCamera className="size-[16px]" />
-              </label>
-            </div>
-          </div>
+                <div className="flex flex-col items-start gap-[4px]">
+                  <Text typo="body-1-medium" color="sub">
+                    닉네임
+                  </Text>
 
-          <div className="flex flex-col gap-[32px]">
-            <button
-              type="button"
-              onClick={() => setNameDialogOpen(true)}
-              className="flex w-full items-center justify-between"
-            >
-              <div className="flex flex-col items-start gap-[4px]">
-                <Text typo="body-1-medium" color="sub">
-                  닉네임
-                </Text>
+                  <Text typo="subtitle-2-medium">{user?.name}</Text>
+                </div>
+                <IcChevronRight className="size-[16px] text-icon-sub" />
+              </button>
+              <SystemDialog
+                open={nameDialogOpen}
+                onOpenChange={handleSetNameDialogOpen}
+                title="닉네임 변경"
+                description="새로 사용할 이름을 입력해주세요"
+                preventClose={isPending}
+                content={
+                  <>
+                    {isPending ? (
+                      <div className="animate-pulse text-center">Loading...</div>
+                    ) : (
+                      <Input
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        placeholder={user?.name}
+                        max={10}
+                        hasClear
+                        onClearClick={() => setNewName('')}
+                        helperText={`10자 이내로 입력해주세요 (${newName.length}/10)`}
+                      />
+                    )}
+                  </>
+                }
+                onConfirm={handleChangeName}
+                disabledConfirm={newName.length === 0}
+              />
 
-                <Text typo="subtitle-2-medium">{user?.name}</Text>
+              <InterestedCategoryDrawer interestedCategory={user?.category} />
+
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col items-start gap-[4px]">
+                  <Text typo="body-1-medium" color="sub">
+                    이메일
+                  </Text>
+
+                  <Text typo="subtitle-2-medium" color="primary">
+                    {user?.email ? user.email : '이메일 주소를 등록해주세요'}
+                  </Text>
+                </div>
               </div>
-              <IcChevronRight className="size-[16px] text-icon-sub" />
-            </button>
-            <SystemDialog
-              open={nameDialogOpen}
-              onOpenChange={handleSetNameDialogOpen}
-              title="닉네임 변경"
-              description="새로 사용할 이름을 입력해주세요"
-              preventClose={isPending}
-              content={
-                <>
-                  {isPending ? (
-                    <div className="animate-pulse text-center">Loading...</div>
-                  ) : (
-                    <Input
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      placeholder={user?.name}
-                      max={10}
-                      hasClear
-                      onClearClick={() => setNewName('')}
-                      helperText={`10자 이내로 입력해주세요 (${newName.length}/10)`}
-                    />
-                  )}
-                </>
-              }
-              onConfirm={handleChangeName}
-              disabledConfirm={newName.length === 0}
-            />
 
-            <InterestedCategoryDrawer interestedCategory={user?.category} />
-
-            <div className="flex w-full items-center justify-between">
-              <div className="flex flex-col items-start gap-[4px]">
-                <Text typo="body-1-medium" color="sub">
-                  이메일
-                </Text>
-
-                <Text typo="subtitle-2-medium" color="primary">
-                  {user?.email ? user.email : '이메일 주소를 등록해주세요'}
-                </Text>
-              </div>
-            </div>
-
-            <div className="flex w-full items-center justify-between">
-              <div className="flex flex-col items-start gap-[4px]">
-                <Text typo="body-1-medium" color="sub">
-                  로그인 정보
-                </Text>
-                <div className="flex items-center gap-[8px]">
-                  {user?.socialPlatform === 'KAKAO' ? (
-                    <>
-                      <ImgRoundKakao className="size-[20px]" />
-                      <Text typo="subtitle-2-medium">카카오 로그인</Text>
-                    </>
-                  ) : (
-                    <>
-                      <ImgRoundGoogle className="size-[20px]" />
-                      <Text typo="subtitle-2-medium">구글 로그인</Text>
-                    </>
-                  )}
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col items-start gap-[4px]">
+                  <Text typo="body-1-medium" color="sub">
+                    로그인 정보
+                  </Text>
+                  <div className="flex items-center gap-[8px]">
+                    {user?.socialPlatform === 'KAKAO' ? (
+                      <>
+                        <ImgRoundKakao className="size-[20px]" />
+                        <Text typo="subtitle-2-medium">카카오 로그인</Text>
+                      </>
+                    ) : (
+                      <>
+                        <ImgRoundGoogle className="size-[20px]" />
+                        <Text typo="subtitle-2-medium">구글 로그인</Text>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex-center pb-[56px]">
-          <TextButton
-            onClick={() => setLogoutDialogOpen(true)}
-            variant={'sub'}
-            size={'sm'}
-            className="pr-[16px] border-r border-divider"
-          >
-            로그아웃
-          </TextButton>
-          <SystemDialog
-            open={logoutDialogOpen}
-            onOpenChange={setLogoutDialogOpen}
-            title="로그아웃 하시겠어요?"
-            cancelLabel="취소"
-            confirmLabel="로그아웃"
-            variant="critical"
-            onConfirm={handleLogout}
-          />
-          <TextButton
-            onClick={() => router.push(RoutePath.accountWithdraw)}
-            variant={'sub'}
-            size={'sm'}
-            className="pl-[16px]"
-          >
-            탈퇴하기
-          </TextButton>
+          <div className="flex-center pb-[56px]">
+            <TextButton
+              onClick={() => setLogoutDialogOpen(true)}
+              variant={'sub'}
+              size={'sm'}
+              className="pr-[16px] border-r border-divider"
+            >
+              로그아웃
+            </TextButton>
+            <SystemDialog
+              open={logoutDialogOpen}
+              onOpenChange={setLogoutDialogOpen}
+              title="로그아웃 하시겠어요?"
+              cancelLabel="취소"
+              confirmLabel="로그아웃"
+              variant="critical"
+              onConfirm={handleLogout}
+            />
+            <TextButton
+              onClick={() => router.push(RoutePath.accountWithdraw)}
+              variant={'sub'}
+              size={'sm'}
+              className="pl-[16px]"
+            >
+              탈퇴하기
+            </TextButton>
+          </div>
         </div>
       </HeaderOffsetLayout>
     </>

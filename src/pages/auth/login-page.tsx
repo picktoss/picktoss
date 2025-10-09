@@ -76,13 +76,13 @@ const LoginPage = () => {
             }
           />
 
-          <HeaderOffsetLayout className="size-full flex-center flex-col gap-[71.52px]">
+          <HeaderOffsetLayout className="size-full max-w-xl flex-center flex-col gap-[71.52px]">
             <div className="flex flex-col gap-[32px]">
               <div className="flex-center flex-col gap-[16px]">
                 <ImgSymbol className="w-[80px]" />
                 <IcLogo className="w-[210px] h-[53.48px] text-icon-inverse" />
               </div>
-              <div className="flex flex-col gap-[10px]">
+              <div className="flex flex-col gap-[10px] w-screen max-w-xl">
                 <Marquee gradient={false} speed={20} direction="left">
                   {exampleQuestions.map((item, index) => (
                     <QuestionBox
