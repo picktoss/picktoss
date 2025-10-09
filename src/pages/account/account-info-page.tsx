@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import imageCompression from 'browser-image-compression'
 import { toast } from 'sonner'
 
 import { withHOC } from '@/app/hoc/with-page-config'
@@ -16,6 +17,7 @@ import { BackButton } from '@/shared/components/buttons/back-button'
 import { Header } from '@/shared/components/header'
 import { SystemDialog } from '@/shared/components/system-dialog'
 import { Input } from '@/shared/components/ui/input'
+import Loading from '@/shared/components/ui/loading'
 import { Text } from '@/shared/components/ui/text'
 import { TextButton } from '@/shared/components/ui/text-button'
 import { RoutePath, useRouter } from '@/shared/lib/router'
@@ -30,6 +32,8 @@ const AccountInfoPage = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false)
   const [newName, setNewName] = useState<string>('')
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
+
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false)
 
   const { mutate: updateMemberName, isPending } = useUpdateMemberName()
   const { mutate: updateMemberImage } = useUpdateMemberImage()
@@ -86,12 +90,25 @@ const AccountInfoPage = () => {
     const prevState = user?.image
 
     const file = e.target.files?.[0]
+
     if (file) {
-      const imageString = await convertFileToString(file)
+      setIsUploadingImage(true)
+      // 목적: 긴 변 기준 1024px, 목표 300KB 안팎, WebP 우선
+      const compressedFile = await imageCompression(file, {
+        maxWidthOrHeight: 1024,
+        maxSizeMB: 0.3, // 목표 용량 300KB
+        useWebWorker: true,
+        fileType: 'image/webp', // 브라우저 지원 시 WebP
+        initialQuality: 0.8,
+      })
+
+      console.log(compressedFile)
+
+      const imageString = await convertFileToString(compressedFile)
       setImageUrl(imageString)
 
       updateMemberImage(
-        { image: file },
+        { image: compressedFile },
         {
           onSuccess: () => {
             if (!prevState) {
@@ -104,6 +121,9 @@ const AccountInfoPage = () => {
             console.error('이미지 변환 실패:', error)
             setImageUrl(user?.image) // 기존 이미지로 되돌림
           },
+          onSettled: () => {
+            setIsUploadingImage(false)
+          },
         },
       )
     }
@@ -112,6 +132,8 @@ const AccountInfoPage = () => {
   return (
     <>
       <Header left={<BackButton />} title="계정 정보" />
+
+      {isUploadingImage && <Loading className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
 
       <HeaderOffsetLayout className="size-full overscroll-none">
         <div className="size-full overflow-y-auto px-[16px] flex flex-col justify-between">
