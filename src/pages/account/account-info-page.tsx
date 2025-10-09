@@ -113,7 +113,7 @@ const AccountInfoPage = () => {
     <>
       <Header left={<BackButton />} title="계정 정보" />
 
-      <HeaderOffsetLayout className="h-full flex flex-col overflow-x-hidden px-[16px] justify-between">
+      <HeaderOffsetLayout className="h-dvh flex flex-col overflow-x-hidden px-[16px] justify-between">
         <div className="w-full flex flex-col">
           <div className="flex-center w-full pb-[44px] pt-[24px]">
             <div className="relative">
