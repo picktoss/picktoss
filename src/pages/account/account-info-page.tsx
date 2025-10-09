@@ -93,9 +93,9 @@ const AccountInfoPage = () => {
 
     if (file) {
       setIsUploadingImage(true)
-      // 목적: 긴 변 기준 8000px, 목표 300KB 안팎, WebP 우선
+      // 목적: 긴 변 기준 1024px, 목표 300KB 안팎, WebP 우선
       const compressedFile = await imageCompression(file, {
-        maxWidthOrHeight: 8000,
+        maxWidthOrHeight: 1024,
         maxSizeMB: 0.3, // 목표 용량 300KB
         useWebWorker: true,
         fileType: 'image/webp', // 브라우저 지원 시 WebP
