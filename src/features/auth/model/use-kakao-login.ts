@@ -32,9 +32,7 @@ export const useKakaoLogin = (onSuccess?: () => void) => {
 
   const { mutateAsync: loginMutation } = useLogin()
 
-  const loginWithKakao = async () => {
-    setIsLoading(true)
-
+  const kakaoLogin = async () => {
     if (!isKakaoSDKLoaded || kakaoSDKError) {
       console.error('Kakao SDK 로드 실패:', kakaoSDKError)
       return
@@ -53,6 +51,8 @@ export const useKakaoLogin = (onSuccess?: () => void) => {
       window.Kakao.Auth.login({
         scope: 'profile_nickname, account_email',
         success: async (authObj) => {
+          setIsLoading(true)
+
           const result = await loginMutation({
             data: {
               accessToken: authObj.access_token,
@@ -84,5 +84,5 @@ export const useKakaoLogin = (onSuccess?: () => void) => {
     }
   }
 
-  return { kakaoLogin: loginWithKakao, isLoading }
+  return { kakaoLogin, isLoading }
 }
