@@ -7,6 +7,7 @@ import { ImgStar } from '@/shared/assets/images'
 import { Button } from '@/shared/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/shared/components/ui/dialog'
 import { Text } from '@/shared/components/ui/text'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const RewardDialogForInviter = ({
   open,
@@ -19,6 +20,7 @@ const RewardDialogForInviter = ({
 }) => {
   const queryClient = useQueryClient()
   const { mutate: confirmInvite } = useConfirmInviteCodeBySignUp()
+  const { t } = useTranslation()
 
   const handleReward = () => {
     confirmInvite()
@@ -44,20 +46,21 @@ const RewardDialogForInviter = ({
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <DialogTitle className="typo-h4 text-center">친구 초대 보상 도착</DialogTitle>
+            <DialogTitle className="typo-h4 text-center">{t('profile.inviter_reward_dialog.title')}</DialogTitle>
             <DialogDescription className="typo-subtitle-2-medium text-sub text-center">
-              초대해주신 {userName}님께 <br />
-              보상으로 별{' '}
+              {t('profile.inviter_reward_dialog.invite_reward_message1')}{' '}
+              {t('profile.invite_reward_dialog.dear_name', { name: userName })} <br />
+              {t('profile.inviter_reward_dialog.invite_reward_message2')} {t('profile.invite_reward_dialog.star_unit')}{' '}
               <Text as={'span'} typo="subtitle-2-medium" color="accent">
-                50개
+                {t('profile.invite_reward_dialog.star_count', { count: 50 })}
               </Text>
-              를 드려요
+              {t('profile.inviter_reward_dialog.invite_reward_message3')}
             </DialogDescription>
           </div>
         </div>
 
         <Button onClick={handleReward} className="w-full">
-          받기
+          {t('profile.inviter_reward_dialog.receive_button')}
         </Button>
       </DialogContent>
     </Dialog>

@@ -5,6 +5,7 @@ import { Button } from '@/shared/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/shared/components/ui/dialog'
 import { Text } from '@/shared/components/ui/text'
 import { removeLocalStorageItem } from '@/shared/lib/storage/lib'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const RewardDialogForInvitee = ({
   open,
@@ -51,6 +52,8 @@ const RewardDialogForInvitee = ({
 export default RewardDialogForInvitee
 
 const RewardDialogContentForInvitee = ({ userName, handleReward }: { userName: string; handleReward: () => void }) => {
+  const { t } = useTranslation()
+
   return (
     <DialogContent
       onPointerDownOutside={(e) => e.preventDefault()}
@@ -68,25 +71,29 @@ const RewardDialogContentForInvitee = ({ userName, handleReward }: { userName: s
         </div>
 
         <div className="flex flex-col gap-[8px]">
-          <DialogTitle className="typo-h4 text-center">추가 별 지급</DialogTitle>
+          <DialogTitle className="typo-h4 text-center">{t('profile.invite_reward_dialog.title')}</DialogTitle>
           <DialogDescription className="typo-subtitle-2-medium text-sub text-center">
-            초대장을 받으신 {userName}님께 <br />별{' '}
+            {t('profile.invite_reward_dialog.receive_message1')}{' '}
+            {t('profile.invite_reward_dialog.dear_name', { name: userName })} <br />
+            {t('profile.invite_reward_dialog.star_unit')}{' '}
             <Text as={'span'} typo="subtitle-2-medium" color="accent">
-              50개
+              {t('profile.invite_reward_dialog.star_count', { count: 50 })}
             </Text>
-            를 추가로 드려요
+            {t('profile.invite_reward_dialog.receive_message2')}
           </DialogDescription>
         </div>
       </div>
 
       <Button onClick={handleReward} className="w-full">
-        받기
+        {t('profile.invite_reward_dialog.receive_button')}
       </Button>
     </DialogContent>
   )
 }
 
 const RewardDialogContentForSpecial = ({ userName, handleReward }: { userName: string; handleReward: () => void }) => {
+  const { t } = useTranslation()
+
   return (
     <DialogContent
       onPointerDownOutside={(e) => e.preventDefault()}
@@ -104,19 +111,22 @@ const RewardDialogContentForSpecial = ({ userName, handleReward }: { userName: s
         </div>
 
         <div className="flex flex-col gap-[8px]">
-          <DialogTitle className="typo-h4 text-center">환영해요, {userName}님!</DialogTitle>
+          <DialogTitle className="typo-h4 text-center">
+            {t('profile.invite_reward_dialog.welcome')} {t('profile.invite_reward_dialog.name', { name: userName })}
+          </DialogTitle>
           <DialogDescription className="typo-subtitle-2-medium text-sub text-center">
-            특별 가입 혜택인 <br />별{' '}
+            {t('profile.invite_reward_dialog.special_reward_message1')} <br />
+            {t('profile.invite_reward_dialog.star_unit')}{' '}
             <Text as={'span'} typo="subtitle-2-medium" color="accent">
-              1000개
+              {t('profile.invite_reward_dialog.star_count', { count: 1000 })}
             </Text>
-            가 도착했어요
+            {t('profile.invite_reward_dialog.special_reward_message2')}
           </DialogDescription>
         </div>
       </div>
 
       <Button onClick={handleReward} className="w-full">
-        받기
+        {t('profile.inviter_reward_dialog.receive_button')}
       </Button>
     </DialogContent>
   )

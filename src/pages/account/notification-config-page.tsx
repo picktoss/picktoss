@@ -8,13 +8,15 @@ import { BackButton } from '@/shared/components/buttons/back-button'
 import { Header } from '@/shared/components/header'
 // import NotificationItem from '@/shared/components/items/notification-item'
 import { Text } from '@/shared/components/ui/text'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const NotificationConfigPage = () => {
   // const { data, isLoading } = useGetNotifications()
+  const { t } = useTranslation()
 
   return (
     <>
-      <Header left={<BackButton />} title="알림" className="px-[8px]" />
+      <Header left={<BackButton />} title={t('profile.notification_config_page.header')} className="px-[8px]" />
 
       <HeaderOffsetLayout className="size-full overscroll-none">
         <div className="size-full overflow-y-auto px-[16px]">
@@ -47,11 +49,12 @@ const NotificationConfigPage = () => {
 }
 
 const EmptyNotification = () => {
+  const { t } = useTranslation()
   return (
     <div className="flex-center size-full flex-col gap-[16px] pb-[107px]">
       <ImgMegaphoneEmpty width={120} height={120} />
       <Text typo="body-1-medium" color="sub">
-        아직 받은 알림이 없어요
+        {t('profile.notification_config_page.no_notifications')}
       </Text>
     </div>
   )

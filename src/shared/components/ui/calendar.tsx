@@ -38,7 +38,7 @@ function Calendar({
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
         caption: 'w-full flex-center pt-1 relative',
-        caption_label: 'typo-h4',
+        caption_label: 'w-fit typo-h4',
         nav: 'space-x-1 flex items-center',
         nav_button: cn(
           // buttonVariants({ variant: 'mediumIcon' }),

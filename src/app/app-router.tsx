@@ -18,6 +18,7 @@ import {
 } from '@/pages/account'
 import { FeedbackCompletePage } from '@/pages/account/feedback-complete-page'
 import FeedbackPage from '@/pages/account/feedback-page'
+import LanguagePage from '@/pages/account/language-page'
 import MyStarPage from '@/pages/account/my-star-page'
 import StarHistoryPage from '@/pages/account/star-history-page'
 import { LoginPage } from '@/pages/auth'
@@ -27,7 +28,7 @@ import HomePage from '@/pages/home-page'
 import { InstallGuidePage } from '@/pages/install-guide-page'
 import InviteLoginPage from '@/pages/invite/invite-login-page'
 import InvitePage from '@/pages/invite/invite-page'
-import { LibraryPage, NoteEditPage, NoteQuizPage } from '@/pages/library'
+import { LibraryPage } from '@/pages/library'
 import { NoteCreatePage } from '@/pages/note-create'
 import { ProgressQuizPage } from '@/pages/progress-quiz-page'
 import QuizDetailEditPage from '@/pages/quiz-detail/quiz-detail-edit-page'
@@ -38,6 +39,7 @@ import SearchPage from '@/pages/search-page'
 import { AuthLayout } from '@/app/layout/auth-layout'
 import { RewardLayout } from '@/app/layout/reward-layout'
 import { RootLayout } from '@/app/layout/root-layout'
+import NetworkErrorFallback from '@/app/network-error'
 import NotFound from '@/app/not-found'
 
 import { RoutePath } from '@/shared/lib/router'
@@ -59,14 +61,13 @@ export const AppRouter = () => {
               {/* Library */}
               <Route path={RoutePath.library}>
                 <Route index element={<LibraryPage />} />
-                <Route path={RoutePath.libraryNoteQuiz} element={<NoteQuizPage />} />
-                <Route path={RoutePath.libraryNoteEdit} element={<NoteEditPage />} />
               </Route>
 
               {/* Account */}
               <Route path={RoutePath.account}>
                 <Route index element={<AccountPage />} />
                 <Route path={RoutePath.accountInfo} element={<AccountInfoPage />} />
+                <Route path={RoutePath.accountLanguage} element={<LanguagePage />} />
                 <Route path={RoutePath.accountDailyQuizAttendance} element={<DailyQuizAttendancePage />} />
                 <Route path={RoutePath.accountQuizAnalysis} element={<QuizAnalysisPage />} />
                 <Route path={RoutePath.accountQuizRecord} element={<QuizRecordPage />} />
@@ -119,8 +120,12 @@ export const AppRouter = () => {
         </Route>
 
         <Route path="/ads.txt" />
+
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
+
+        {/* network-error */}
+        <Route path="/network-error" element={<NetworkErrorFallback />} />
       </Routes>
     </BrowserRouter>
   )

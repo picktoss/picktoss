@@ -29,6 +29,7 @@ import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { UseCheckListReturn } from '@/shared/hooks/use-check-list'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { cn } from '@/shared/lib/utils'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 interface Props {
   activeTab: 'MY' | 'BOOKMARK'
@@ -56,6 +57,7 @@ const MyNotesContent = ({
   type Tab = typeof activeTab
 
   const { trackEvent } = useAmplitude()
+  const { t } = useTranslation()
   const router = useRouter()
   const [sortOption, setSortOption] = useQueryParam('/library', 'sortOption')
   const activeSortOption = sortOption ?? 'CREATED_AT'
@@ -92,13 +94,13 @@ const MyNotesContent = ({
         unCheckAll()
       }
     } else {
-      alert('이 브라우저에서는 공유 기능을 지원하지 않습니다.')
+      alert(t('library.alert.share_not_supported'))
     }
   }
 
   const handleDelete = (documentIds: number[]) => {
     deleteDocument({ documentIds })
-    toast.success('퀴즈가 삭제되었어요')
+    toast.success(t('library.toast.delete_quiz_success'))
   }
 
   useEffect(() => {
@@ -123,13 +125,13 @@ const MyNotesContent = ({
                 className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
                 value={'MY' as Tab}
               >
-                생성한 {user?.totalQuizCount}
+                {t('library.my_notes_content.created_count')} {user?.totalQuizCount}
               </TabsTrigger>
               <TabsTrigger
                 className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
                 value={'BOOKMARK' as Tab}
               >
-                저장한 {user?.bookmarkCount}
+                {t('library.my_notes_content.saved_count')} {user?.bookmarkCount}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -145,21 +147,21 @@ const MyNotesContent = ({
                 right={activeSortOption === 'CREATED_AT' && <IcCheck className="size-[20px]" />}
                 className="cursor-pointer"
               >
-                추가된 일자
+                {t('library.my_notes_content.date_added')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setSortOption('NAME')}
                 right={activeSortOption === 'NAME' && <IcCheck className="size-[20px]" />}
                 className="cursor-pointer"
               >
-                이름
+                {t('common.name')}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setSortOption('QUIZ_COUNT')}
                 right={activeSortOption === 'QUIZ_COUNT' && <IcCheck className="size-[20px]" />}
                 className="cursor-pointer"
               >
-                문제 수
+                {t('library.my_notes_content.question_count')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -208,7 +210,7 @@ const MyNotesContent = ({
                   >
                     <IcUpload className="size-[20px] mb-[4px] text-inverse" />
                     <Text typo="body-1-medium" color="inverse" className="size-fit">
-                      공유
+                      {t('library.my_notes_content.share_button')}
                     </Text>
                   </button>,
                   <button
@@ -221,7 +223,7 @@ const MyNotesContent = ({
                   >
                     <IcDelete className="size-[20px] mb-[4px]" />
                     <Text typo="body-1-medium" color="inverse" className="size-fit">
-                      삭제
+                      {t('common.delete')}
                     </Text>
                   </button>,
                 ]}
@@ -286,7 +288,7 @@ const MyNotesContent = ({
             variant={'critical'}
             size={'lg'}
           >
-            선택 삭제
+            {t('library.my_notes_content.select_delete_button')}
           </TextButton>
         </div>
       )}
@@ -294,18 +296,18 @@ const MyNotesContent = ({
       <SystemDialog
         open={openDelete}
         onOpenChange={setOpenDelete}
-        title="퀴즈를 삭제하시겠어요?"
+        title={t('library.my_notes_content.delete_confirm_title')}
         content={
           <Text typo="body-1-medium" color="sub" className="break-normal whitespace-pre-line">
-            선택한 퀴즈와{' '}
+            {t('library.my_notes_content.delete_confirm_message')}{' '}
             <Text as="span" typo="body-1-medium" color="incorrect">
-              {`${selectedTotalQuizCount}개의 문제`}
-            </Text>
-            가 모두 삭제되며, 복구할 수 없어요
+              {t('library.my_notes_content.delete_confirm_count', { count: selectedTotalQuizCount })}
+            </Text>{' '}
+            {t('library.my_notes_content.delete_confirm_warning')}
           </Text>
         }
         variant="critical"
-        confirmLabel="삭제"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           handleDelete(getCheckedIds().map((id) => Number(id)))
           setOpenDelete(false)
@@ -328,6 +330,7 @@ const NeedReleaseDialog = ({
   selectedDocument?: GetAllDocumentsDocumentDto
 }) => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const [openNeedMoreQuiz, setOpenNeedMoreQuiz] = useState(false)
 
@@ -346,7 +349,7 @@ const NeedReleaseDialog = ({
             router.push('/quiz-detail/:noteId', { params: [String(selectedDocument.id)] })
           },
           onError: () => {
-            toast.error('퀴즈 공개에 실패했어요')
+            toast.error(t('library.toast.public_failed'))
           },
           onSettled: () => {
             onOpenChange(false)
@@ -362,22 +365,22 @@ const NeedReleaseDialog = ({
         <DialogContent className="px-[24px] pt-[32px] pb-[20px] w-[308px] flex items-center flex-col gap-[32px]">
           <DialogHeader className="w-full flex-center flex-col gap-[8px]">
             <DialogTitle>
-              <Text typo="h4">퀴즈 공개가 필요해요</Text>
+              <Text typo="h4">{t('library.my_notes_content.public_required_title')}</Text>
             </DialogTitle>
             <Text typo="subtitle-2-medium" color="sub" className="break-words text-center">
-              픽토스에 퀴즈가 공개된 상태여야 <br />
-              공유할 수 있어요
+              {t('library.my_notes_content.public_required_message')} <br />
+              {t('library.my_notes_content.public_required_action')}
             </Text>
           </DialogHeader>
 
           <div className="w-full flex-center flex-col gap-[24px]">
             <Button onClick={handleRelease} data-state={isPending && 'loading'} className="w-full">
-              퀴즈 공개하기
+              {t('library.my_notes_content.make_public_button')}
             </Button>
 
             <DialogClose>
               <TextButton size={'lg'} className="text-sub">
-                닫기
+                {t('common.close')}
               </TextButton>
             </DialogClose>
           </div>
@@ -387,15 +390,15 @@ const NeedReleaseDialog = ({
       <SystemDialog
         open={openNeedMoreQuiz}
         onOpenChange={setOpenNeedMoreQuiz}
-        title="문제를 더 생성해주세요"
+        title={t('library.my_notes_content.more_questions_title')}
         content={
           <div className="break-words text-center">
-            퀴즈에 포함된 문제가 <br />
-            5개 이상이어야 공유할 수 있어요
+            {t('library.my_notes_content.description1')} <br />
+            {t('library.my_notes_content.description2')}
           </div>
         }
-        cancelLabel="취소하기"
-        confirmLabel="생성하기"
+        cancelLabel={t('common.cancel')}
+        confirmLabel={t('common.generate')}
         onConfirm={() => {
           if (!selectedDocument) return
           router.push('/quiz-detail/:noteId', { params: [String(selectedDocument.id)] })

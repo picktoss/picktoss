@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog'
 import { cn } from '@/shared/lib/utils'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 interface SystemDialogProps {
   open?: boolean
@@ -33,12 +34,14 @@ export const SystemDialog = ({
   description,
   content,
   variant = 'default',
-  cancelLabel = '취소',
-  confirmLabel = '확인',
+  cancelLabel,
+  confirmLabel,
   onConfirm,
   preventClose = false,
   disabledConfirm = false,
 }: SystemDialogProps) => {
+  const { t } = useTranslation()
+
   const handleOpenChange = (newOpen: boolean) => {
     if (preventClose && !newOpen) {
       return
@@ -49,7 +52,7 @@ export const SystemDialog = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="max-w-[280px] w-fit rounded-[16px] px-[24px] pt-[24px] pb-[8px] whitespace-nowrap">
+      <DialogContent className="max-w-[280px] w-fit rounded-[16px] px-[24px] pt-[24px] pb-[8px] whitespace-pre-line">
         <DialogHeader className="text-center">
           <DialogTitle className="typo-subtitle-2-bold text-text-primary">{title}</DialogTitle>
           {description && <DialogDescription className="typo-body-1-medium text-sub">{description}</DialogDescription>}
@@ -58,7 +61,7 @@ export const SystemDialog = ({
         <DialogFooter className="mt-[20px] self-stretch inline-flex justify-between items-center">
           <DialogClose asChild>
             <button className="typo-button-2 text-sub w-28 h-12 text-center justify-center text-base leading-none">
-              {cancelLabel}
+              {cancelLabel ?? t('common.cancel')}
             </button>
           </DialogClose>
           <button
@@ -70,7 +73,7 @@ export const SystemDialog = ({
             onClick={onConfirm}
             disabled={disabledConfirm}
           >
-            {confirmLabel}
+            {confirmLabel ?? t('common.confirm')}
           </button>
         </DialogFooter>
       </DialogContent>

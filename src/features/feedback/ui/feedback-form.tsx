@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -24,6 +25,7 @@ interface FeedbackFormProps {
 }
 
 export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
+  const { t } = useTranslation()
   const { mutate: createFeedback, isPending } = useCreateFeedback()
   const [openPrivacyDrawer, setOpenPrivacyDrawer] = useState(false)
   const [images, setImages] = useState<File[]>([])
@@ -54,7 +56,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
       // 첫 번째 에러 메시지 표시
       const firstError = Object.values(formState.errors)[0]
       if (firstError && firstError.message) {
-        toast(firstError.message as string, {
+        toast(t(firstError.message), {
           icon: <IcWarningFilled className="size-4 text-icon-critical" />,
         })
       }
@@ -67,7 +69,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
       const fileArray = Array.from(e.target.files)
       if (images.length + fileArray.length > 3) {
         // 최대 3개 이미지 제한
-        toast('이미지는 최대 3개까지 첨부 가능합니다.', {
+        toast(t('profile.toast.max_images'), {
           icon: <IcWarningFilled className="size-4 text-icon-critical" />,
         })
         return
@@ -89,7 +91,9 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
   // 폼 제출 처리
   const onSubmit = (data: FeedbackFormValues) => {
     // 선택된 타입의 한글 이름 찾기
-    const selectedTypeLabel = Object.entries(feedbackTypeMap).find(([_, value]) => value === data.type)?.[0] || '문의'
+    const selectedTypeLabel =
+      Object.entries(feedbackTypeMap).find(([_, value]) => value === data.type)?.[0] ||
+      t('profile.feedback_form.inquiry_label')
 
     createFeedback(
       {
@@ -97,14 +101,14 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
         content: data.content,
         email: data.email,
         files: images,
-        title: `[${selectedTypeLabel}] 문의`,
+        title: `[${selectedTypeLabel}] ${t('profile.feedback_form.inquiry_label')}`,
       },
       {
         onSuccess: () => {
           if (onSuccess) onSuccess()
         },
         onError: () => {
-          toast('잠시 후 다시 시도해주세요', {
+          toast(t('profile.toast.try_again'), {
             icon: <IcWarningFilled className="size-4 text-icon-critical" />,
           })
           if (onError) onError()
@@ -118,9 +122,9 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
       <form className="flex flex-col flex-1" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="px-4 py-5">
           <div className="grid gap-2">
-            <Text typo="h4">픽토스에 전하고 싶은 말을 남겨주세요</Text>
+            <Text typo="h4">{t('profile.feedback_form.title')}</Text>
             <Text typo="body-1-regular" color="sub">
-              내용을 꼼꼼히 확인한 후 이메일로 답변 드릴게요
+              {t('profile.feedback_form.description')}
             </Text>
           </div>
 
@@ -131,7 +135,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>문의 유형</FormLabel>
+                  <FormLabel required>{t('profile.feedback_form.inquiry_type_label')}</FormLabel>
                   <RadioGroup value={field.value} onValueChange={field.onChange} className="flex flex-wrap gap-2">
                     {Object.entries(feedbackTypeMap).map(([label, value]) => (
                       <FormItem key={value} className="space-y-0">
@@ -146,7 +150,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                               : 'bg-base-1 ring ring-divider text-secondary'
                           }`}
                         >
-                          <span className="px-1">{label}</span>
+                          <span className="px-1">{t(label)}</span>
                         </label>
                       </FormItem>
                     ))}
@@ -163,12 +167,12 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>상세 내용</FormLabel>
+                  <FormLabel required>{t('profile.feedback_form.details_label')}</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="문의하고자 하는 내용을 자세히 적어주세요"
-                      helperText="20자 이상 입력해주세요"
+                      placeholder={t('profile.feedback_form.content_placeholder')}
+                      helperText={t('profile.feedback_form.min_length_helper')}
                     />
                   </FormControl>
                 </FormItem>
@@ -178,7 +182,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
 
           {/* 사진 */}
           <div className="mt-10 grid gap-2">
-            <FormLabel>사진</FormLabel>
+            <FormLabel>{t('profile.feedback_form.photo_label')}</FormLabel>
             <div className="flex items-center gap-2 pb-[12px]">
               <div className="flex items-center">
                 <button
@@ -188,7 +192,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                 >
                   <IcCamera />
                   <Text typo="body-2-medium" color="secondary">
-                    사진 ({images.length}/3)
+                    {t('profile.feedback_form.photo_label')} ({images.length}/3)
                   </Text>
                 </button>
                 <input
@@ -235,17 +239,18 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel required className="mb-3">
-                    답변 받으실 이메일
+                    {t('profile.feedback_form.email_label')}
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="이메일 주소를 입력해주세요" />
+                    <Input {...field} placeholder={t('profile.feedback_form.email_placeholder')} />
                   </FormControl>
                   <div className="mt-6">
                     <Text typo="body-2-medium" color="caption">
-                      답변은 평균 7일 정도 소요됩니다.
+                      {t('profile.feedback_form.reply_time_message')}
                       <br />
-                      문의하신 답변이 완료되면 이메일과 앱 푸시로 알려드립니다.
-                      <br />앱 푸시가 꺼진 경우 알림이 가지 않으니, 푸시 설정을 확인해주세요.
+                      {t('profile.feedback_form.notification_message')}
+                      <br />
+                      {t('profile.feedback_form.push_notification_warning')}
                     </Text>
                   </div>
                 </FormItem>
@@ -266,7 +271,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                       open={openPrivacyDrawer}
                       onOpenChange={setOpenPrivacyDrawer}
                       height="md"
-                      title="개인정보 수집 및 이용동의"
+                      title={t('etc.login_page.privacy_policy')}
                       trigger={
                         <button
                           type="button"
@@ -276,7 +281,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                           <div className="flex items-center gap-2">
                             <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                             <Text typo="body-2-medium" color="primary">
-                              개인정보 수집 및 이용동의
+                              {t('etc.login_page.privacy_policy')}
                             </Text>
                           </div>
                           <IcChevronRight className="size-4 text-icon-sub" />
@@ -285,19 +290,16 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                       body={
                         <div className="mt-[32px] mb-[46px]">
                           <Text typo="body-1-medium" color="secondary">
-                            코니티는 개인정보보호법 등 관련 법령상의 개인정보보호 규정을 준수하며, 다음과 같이
-                            개인정보를 수집 이용합니다,
+                            {t('profile.feedback_form.privacy_policy_content')}
                             <br />
                             <br />
                             <ul className="list-disc ml-4">
-                              <li>수집 이용 항목: 이름(닉네임), 이메일주소, 신고내용</li>
-                              <li>수집 이용 목적: 법률 위반 사항 신고, 처리결과 회신</li>
-                              <li>보유 및 이용기간: 전자상거래등에서의 소비자보호에 관한 법률에 따라 3년</li>
+                              <li>{t('profile.feedback_form.collection_items')}</li>
+                              <li>{t('profile.feedback_form.collection_purpose')}</li>
+                              <li>{t('profile.feedback_form.retention_period')}</li>
                             </ul>
                             <br />
-                            <span className="text-info">
-                              *위 개인정보 수집 이용에 동의하지 않으실 수 있으며, 동의하지 않는 경우 신고가 제한됩니다.
-                            </span>
+                            <span className="text-info">{t('profile.feedback_form.consent_info')}</span>
                           </Text>
                         </div>
                       }
@@ -313,7 +315,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
                             }, 10)
                           }}
                         >
-                          동의하기
+                          {t('profile.feedback_form.agree_button')}
                         </Button>
                       }
                     />
@@ -324,7 +326,7 @@ export const FeedbackForm = ({ onSuccess, onError }: FeedbackFormProps) => {
           </div>
 
           <Button type="submit" disabled={isPending || !form.getValues().privacy}>
-            {isPending ? '제출 중...' : '문의 보내기'}
+            {isPending ? t('profile.feedback_form.sending_message') : t('profile.feedback_form.submit_button')}
           </Button>
         </div>
       </form>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -20,6 +21,7 @@ import { Textarea } from '@/shared/components/ui/textarea'
 import { useRouter } from '@/shared/lib/router'
 
 const WithdrawForm = () => {
+  const { t } = useTranslation()
   const router = useRouter()
 
   const { clearToken } = useAuthStore()
@@ -75,7 +77,7 @@ const WithdrawForm = () => {
                         htmlFor={`type-${label}`}
                         selected={field.value === value}
                       >
-                        {label}
+                        {t(label)}
                       </Selectbox>
                     </FormControl>
                   </FormItem>
@@ -87,7 +89,7 @@ const WithdrawForm = () => {
 
         <div className="px-[16px]">
           <Text typo="body-1-bold" color="sub">
-            상세내용
+            {t('profile.withdraw_form.details_label')}
           </Text>
 
           {/* 상세 내용 */}
@@ -99,7 +101,7 @@ const WithdrawForm = () => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="선택하신 이유에 관한 자세한 내용을 남겨주세요"
+                    placeholder={t('profile.withdraw_form.details_placeholder')}
                     className="input-basic my-[8px] h-[256px] w-full resize-none"
                     maxLength={500}
                   />
@@ -109,7 +111,7 @@ const WithdrawForm = () => {
           />
 
           <Text typo="body-2-medium" color="caption" className="mb-[32px]">
-            {`500자 이내로 입력해주세요 (${watch('content')?.length || 0}/500)`}
+            {`${t('profile.withdraw_form.character_limit')} (${watch('content')?.length || 0}/500)`}
           </Text>
         </div>
 
@@ -127,7 +129,7 @@ const WithdrawForm = () => {
                 </FormControl>
                 <label htmlFor="checkNotification">
                   <Text typo="body-2-medium" color="primary">
-                    저장한 데이터는 모두 삭제되며 복구할 수 없음을 확인했습니다
+                    {t('profile.withdraw_form.confirm_message')}
                   </Text>
                 </label>
               </FormItem>
@@ -138,21 +140,20 @@ const WithdrawForm = () => {
           <SystemDialog
             trigger={
               <Button disabled={isPending || !form.getValues().confirmNotification} className="w-full">
-                {isPending ? '제출 중...' : '탈퇴하기'}
+                {isPending ? t('profile.withdraw_form.submitting_message') : t('profile.withdraw_form.withdraw_button')}
               </Button>
             }
-            title="계정을 삭제하시겠어요?"
+            title={t('profile.withdraw_form.delete_account_confirm_title')}
             content={
-              <Text typo="body-1-medium" color="sub">
-                픽토스에서 만든{' '}
+              <Text typo="body-1-medium" color="sub" className="whitespace-pre-line">
+                {t('profile.withdraw_form.delete_account_confirm_message')}{' '}
                 <Text as="span" typo="body-1-medium" color="critical">
-                  {user?.totalQuizCount ?? 0}개의 문제
+                  {t('profile.withdraw_form.delete_account_confirm_count', { count: user?.totalQuizCount ?? 0 })}
                 </Text>
-                가 <br />
-                모두 삭제됩니다
+                {t('profile.withdraw_form.delete_account_confirm_warning')}
               </Text>
             }
-            confirmLabel="계정 삭제"
+            confirmLabel={t('profile.withdraw_form.delete_account_confirm_button')}
             onConfirm={handleSubmit(handleClickDeleteAccount)}
             variant="critical"
           />

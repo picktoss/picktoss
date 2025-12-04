@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 import { ImgStar } from '@/shared/assets/images'
 import { Text } from '@/shared/components/ui/text'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip'
@@ -15,6 +17,7 @@ export const DailyQuizTooltip = ({
 }: DailyQuizTooltipProps) => {
   const { trackEvent } = useAmplitude()
   const router = useRouter()
+  const { t } = useTranslation()
 
   return (
     <Tooltip
@@ -38,12 +41,18 @@ export const DailyQuizTooltip = ({
       <TooltipContent side="left" color="inverse" arrowPosition="right">
         {todaySolvedDailyQuizCount && 10 - todaySolvedDailyQuizCount > 0 ? (
           <Text typo="body-2-medium">
-            <span className="text-accent">{10 - todaySolvedDailyQuizCount}문제</span> <span>더 풀면 획득!</span>
+            <span className="text-accent">
+              {10 - todaySolvedDailyQuizCount}
+              {t('daily.quiz_tooltip.question')}
+            </span>{' '}
+            <span>{t('daily.quiz_tooltip.solve_more_message')}!</span>
           </Text>
         ) : (
           <>
             {consecutiveSolvedDailyQuizDays && (
-              <Text typo="body-2-medium">연속 {consecutiveSolvedDailyQuizDays}일 완료!</Text>
+              <Text typo="body-2-medium">
+                {t('daily.quiz_tooltip.consecutive_days_complete', { count: consecutiveSolvedDailyQuizDays })}
+              </Text>
             )}
           </>
         )}

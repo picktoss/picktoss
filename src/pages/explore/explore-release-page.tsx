@@ -16,9 +16,11 @@ import { Header } from '@/shared/components/header'
 import { Button } from '@/shared/components/ui/button'
 import { Text } from '@/shared/components/ui/text'
 import { useRouter } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const ExploreReleasePage = () => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const { data } = useGetIsNotPublicDocuments()
 
@@ -39,7 +41,7 @@ const ExploreReleasePage = () => {
         { isPublic: true },
         {
           onSuccess: () => {
-            toast('퀴즈가 공개되었어요')
+            toast(t('explore.toast.public_success_message'))
             router.replace('/quiz-detail/:noteId', { params: [String(selectedId)] })
           },
         },
@@ -49,13 +51,17 @@ const ExploreReleasePage = () => {
 
   return (
     <>
-      <Header className={'bg-surface-2 py-[7px] px-[8px]'} left={<BackButton />} title={'퀴즈 공개'} />
+      <Header
+        className={'bg-surface-2 py-[7px] px-[8px]'}
+        left={<BackButton />}
+        title={t('explore.release_page.title')}
+      />
 
       <HeaderOffsetLayout className="flex flex-col pb-[calc(env(safe-area-inset-bottom)+90px)] h-full">
         <div className="flex flex-col gap-[8px] w-full p-[16px] pb-[12px]">
-          <Text typo="h4">공개할 퀴즈를 선택해주세요</Text>
+          <Text typo="h4">{t('explore.release_page.select_quiz_title')}</Text>
           <Text typo="body-1-medium" color="sub">
-            내가 만든 퀴즈를 다른 사람들이 풀거나 저장할 수 있어요
+            {t('explore.release_page.select_quiz_message')}
           </Text>
         </div>
 
@@ -78,7 +84,7 @@ const ExploreReleasePage = () => {
 
         <FixedBottom className="bg-surface-2">
           <Button disabled={!selectedId} onClick={handleRelease}>
-            완료
+            {t('explore.release_page.complete_button')}
           </Button>
         </FixedBottom>
       </HeaderOffsetLayout>

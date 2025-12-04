@@ -24,6 +24,7 @@ import { usePWA } from '@/shared/hooks/use-pwa'
 import { useScrollRestoration } from '@/shared/hooks/use-scroll-restoration'
 import { Link, useQueryParam, useRouter } from '@/shared/lib/router'
 import { cn } from '@/shared/lib/utils'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const ExplorePage = () => {
   const { isDesktopSize } = useBreakpoint()
@@ -166,7 +167,7 @@ const ExplorePage = () => {
 }
 
 export default withHOC(ExplorePage, {
-  activeTab: '탐험',
+  activeTab: 'EXPLORE',
   navClassName: 'border-t border-divider z-40',
   backgroundClassName: 'bg-surface-2 h-fit',
 })
@@ -176,6 +177,7 @@ const CategoryTab = ({ hideHeader }: { hideHeader: boolean }) => {
   const { trackEvent } = useAmplitude()
 
   const { data: categoryData, isLoading } = useGetCategories()
+  const { t } = useTranslation()
 
   const [params, setParams] = useQueryParam('/explore')
   const activeCategory = params.category
@@ -208,7 +210,7 @@ const CategoryTab = ({ hideHeader }: { hideHeader: boolean }) => {
             onClick={() => setCategory(0)}
             className={cn('px-[13.5px]')}
           >
-            전체
+            {t('explore.explore_page.all_button')}
           </Chip>
 
           {/* Chip 요소들 */}
@@ -247,6 +249,7 @@ const CreateQuizButton = ({ hide }: { hide: boolean }) => {
 
   const { isPWA } = usePWA()
   const router = useRouter()
+  const { t } = useTranslation()
 
   return (
     <button
@@ -274,9 +277,10 @@ const CreateQuizButton = ({ hide }: { hide: boolean }) => {
       }}
     >
       <Text typo="subtitle-2-medium" color="sub" className="center">
-        새로운 퀴즈 만들기...
+        {t('explore.explore_page.create_quiz_button')}
       </Text>
-      <button
+      <div
+        role="button"
         onClick={(e) => {
           e.stopPropagation()
           if (!token) {
@@ -297,7 +301,7 @@ const CreateQuizButton = ({ hide }: { hide: boolean }) => {
         className="flex-center bg-orange-500 rounded-full size-10 absolute right-1 bottom-1/2 translate-y-1/2"
       >
         <IcFile className="size-5 text-white" />
-      </button>
+      </div>
     </button>
   )
 }
@@ -312,6 +316,7 @@ const AppDownloadBanner = ({
   onClose: () => void
   hideHeader: boolean
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={cn(
@@ -353,9 +358,9 @@ const AppDownloadBanner = ({
         </svg>
         <div>
           <Text typo="body-2-medium" color="sub">
-            앱에서 매일 간편하게 퀴즈를 풀어보세요!
+            {t('explore.explore_page.app_download_message')}
           </Text>
-          <Text typo="subtitle-2-bold">픽토스 앱 다운로드</Text>
+          <Text typo="subtitle-2-bold">{t('explore.explore_page.app_download_title')}</Text>
         </div>
       </div>
       <button
@@ -372,6 +377,7 @@ const AppDownloadBanner = ({
 
 // pc 화면에서 다운로드 배너 클릭 시 노출될 QR코드 drawer 컴포넌트
 const DesktopDownloadQRDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+  const { t } = useTranslation()
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent height="lg" hasHandle={false}>
@@ -383,17 +389,17 @@ const DesktopDownloadQRDrawer = ({ open, onOpenChange }: { open: boolean; onOpen
 
         <DrawerHeader className="flex-center flex-col gap-[8px]">
           <Text typo="subtitle-1-bold" color="sub" className="text-center">
-            픽토스 앱 다운로드
+            {t('explore.explore_page.app_download_button')}
           </Text>
           <Text typo="h3" className="text-center">
-            스토어 방문 없이 3초만에 <br />
-            픽토스에서 매일 성장해보세요!
+            {t('explore.explore_page.quick_start_message')} <br />
+            {t('explore.explore_page.growth_message')}
           </Text>
         </DrawerHeader>
 
         <div className="flex-center pt-[20px] pb-[32px]">
           <Text typo="subtitle-2-medium" color="accent">
-            * 휴대폰으로 QR코드를 촬영해주세요
+            {t('explore.explore_page.qr_scan_message')}
           </Text>
         </div>
 

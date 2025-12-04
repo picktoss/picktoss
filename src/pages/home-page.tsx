@@ -20,7 +20,7 @@ import { CreateDailyQuizRecordResponse, GetAllQuizzesResponse } from '@/entities
 import { useCreateDailyQuizRecord, useGetConsecutiveSolvedDailyQuiz, useGetQuizzes } from '@/entities/quiz/api/hooks'
 
 import { IcClose, IcFile, IcPagelink, IcRefresh } from '@/shared/assets/icon'
-import { ImgPush, ImgRoundIncorrect, ImgStar, ImgTutorialRefresh } from '@/shared/assets/images'
+import { ImgPush, ImgPushEng, ImgRoundIncorrect, ImgStar, ImgTutorialRefresh } from '@/shared/assets/images'
 import { AlertDrawer } from '@/shared/components/drawers/alert-drawer'
 import { Header } from '@/shared/components/header'
 import { Button } from '@/shared/components/ui/button'
@@ -37,6 +37,8 @@ import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { StorageKey } from '@/shared/lib/storage'
 import { useLocalStorage } from '@/shared/lib/storage/model/use-storage'
 import { cn } from '@/shared/lib/utils'
+import { SUPPORTED_LOCALE } from '@/shared/locales/i18n'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 type Quiz = GetAllQuizzesResponse['quizzes'][number]
 
@@ -44,6 +46,7 @@ const HomePage = () => {
   const router = useRouter()
   const [redirectUrl, _, removeRedirectUrl] = useLocalStorage(StorageKey.redirectUrl, '')
   const { trackEvent } = useAmplitude()
+  const { t, currentLanguage } = useTranslation()
 
   // 온보딩 관련
   const [userLoaded, setUserLoaded] = useState(false)
@@ -288,11 +291,14 @@ const HomePage = () => {
             <div className="ml-2">
               <Text typo="subtitle-1-bold" color="secondary">
                 {new Date()
-                  .toLocaleDateString('ko-KR', {
-                    month: 'numeric',
-                    day: 'numeric',
-                    weekday: 'short',
-                  })
+                  .toLocaleDateString(
+                    currentLanguage === SUPPORTED_LOCALE.KO ? SUPPORTED_LOCALE.KO : SUPPORTED_LOCALE.EN,
+                    {
+                      month: 'numeric',
+                      day: 'numeric',
+                      weekday: 'short',
+                    },
+                  )
                   .replace(/\s/g, '')}
               </Text>
             </div>
@@ -315,7 +321,7 @@ const HomePage = () => {
               color="sub"
               className="absolute right-1/2 translate-x-1/2 pt-[16px] whitespace-nowrap"
             >
-              당겨서 새 문제 가져오기...💡
+              {t('daily.home_page.pull_to_refresh')}
             </Text>
           ) : (
             <div className="absolute right-1/2 translate-x-1/2 pt-[16px] flex items-center gap-2">
@@ -426,9 +432,9 @@ const HomePage = () => {
                 onOpenChange={setSettingDrawerOpen}
               />
               <Text typo="h4" color="sub" className="flex-center">
-                조건을 만족하는 퀴즈가 없습니다.
+                {t('daily.home_page.no_quizzes_message')}.
                 <br />
-                다른 조건으로 다시 시도해보세요.
+                {t('daily.home_page.try_different_conditions')}.
               </Text>
             </div>
           )}
@@ -452,9 +458,10 @@ const HomePage = () => {
           }}
         >
           <Text typo="subtitle-2-medium" color="sub" className="center">
-            새로운 퀴즈 만들기...
+            {t('daily.home_page.create_quiz_button')}
           </Text>
-          <button
+          <div
+            role="button"
             onClick={(e) => {
               e.stopPropagation()
               router.push('/note/create', {
@@ -470,7 +477,7 @@ const HomePage = () => {
             className="flex-center bg-orange-500 rounded-full size-10 absolute right-1 bottom-1/2 translate-y-1/2"
           >
             <IcFile className="size-5 text-white" />
-          </button>
+          </div>
         </button>
       </div>
       <AlertDrawer
@@ -481,17 +488,21 @@ const HomePage = () => {
           <div className="pt-5">
             <ImgStar className="size-[120px] mx-auto" />
             <Text typo="h2" className="mt-4 text-center">
-              연속 <span className="text-accent">{dailyQuizRecord?.consecutiveSolvedDailyQuizDays}일</span> 완료
+              {t('daily.alert_drawer.title1')}{' '}
+              <span className="text-accent">
+                {t('daily.alert_drawer.title2', { count: dailyQuizRecord?.consecutiveSolvedDailyQuizDays })}
+              </span>{' '}
+              {t('daily.alert_drawer.title3')}
             </Text>
             <div className="mt-2 pb-[32px] border-b border-divider">
               <Text typo="body-1-medium" color="sub" className="text-center">
-                매일 데일리 10문제를 풀면 별 5개를 받아요
+                {t('daily.alert_drawer.description1')}
                 <br />
-                5일 연속 완료할 때마다 20개!
+                {t('daily.alert_drawer.description2')}
               </Text>
             </div>
             {dailyQuizRecord?.consecutiveSolvedDailyQuizDays !== 0 && (
-              <div className="mt-[24px] px-[28px] pt-[6px] pb-[9px] flex justify-between">
+              <div className="mt-[24px] px-[28px] pt-[6px] pb-[9px] flex flex-center gap-[20px]">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div key={index} className="flex flex-col items-center gap-1">
                     <div className="relative">
@@ -541,7 +552,9 @@ const HomePage = () => {
                     </div>
 
                     <Text typo="body-1-bold" color="caption">
-                      {index === 4 ? 20 : 5}개
+                      {index === 4
+                        ? t('daily.alert_drawer.star_count', { count: 20 })
+                        : t('daily.alert_drawer.star_count', { count: 5 })}
                     </Text>
                   </div>
                 ))}
@@ -553,7 +566,7 @@ const HomePage = () => {
                   setRewardDrawerOpen(false)
                 }}
               >
-                확인
+                {t('common.confirm')}
               </Button>
             </div>
           </div>
@@ -569,15 +582,17 @@ const HomePage = () => {
             </div>
           </div>
           <Text typo="h4" className="mt-4 text-center">
-            환영해요, {user?.name}님!
+            {t('daily.home_page.welcome_message')}, {t('daily.home_page.user_name', { name: user?.name })}
           </Text>
           <Text typo="subtitle-2-medium" color="sub" className="text-center mt-2">
-            가입 기념으로 퀴즈를
+            {t('daily.home_page.signup_gift_message')}
             <br />
-            생성할 수 있는 별을 <span className="text-accent">200개</span> 드려요
+            {t('daily.home_page.available_stars_message')}{' '}
+            <span className="text-accent">{t('daily.home_page.stars_unit', { count: 200 })}</span>{' '}
+            {t('daily.home_page.gift_message')}
           </Text>
           <Button onClick={() => setShouldShowOnboardingReward(false)} className="mt-[32px]">
-            받기
+            {t('daily.home_page.receive_button')}
           </Button>
         </DialogContent>
       </Dialog>
@@ -590,19 +605,31 @@ const HomePage = () => {
 }
 
 const TutorialRefresh = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useTranslation()
+
   return (
     <div className="absolute inset-0 bg-black/70 z-50 flex-center flex-col">
       <Text typo="subtitle-1-bold" color="inverse" className="text-center">
-        문제를 바꾸고 싶다면
+        {/* 문제를 바꾸고 싶다면 */}
+        {t('daily.tutorial.message1')}
         <br />
-        카드를 <span className="text-accent">아래로</span> 당겨보세요
+        {t('daily.tutorial.message2')}
+        {/* 카드를 */}
+        <span className="text-accent">
+          {/* 아래로 */} {t('daily.tutorial.message3')}{' '}
+        </span>
+        {/* 당겨보세요 */}
+        {t('daily.tutorial.message4')}
       </Text>
       <div className="mt-[32px] mb-[40px]">
         <ImgTutorialRefresh className="size-[200px]" />
       </div>
       <button onClick={onClose} className="flex items-center gap-2 text-inverse">
         <IcClose className="size-[20px]" />
-        <Text typo="button-1">닫기</Text>
+        <Text typo="button-1">
+          {/* 닫기 */}
+          {t('common.close')}
+        </Text>
       </button>
     </div>
   )
@@ -618,13 +645,14 @@ const IncorrectAnswerBody = ({
   setSettingDrawerOpen: (open: boolean) => void
 }) => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   return (
     <>
       <div className="flex items-center justify-start gap-3 w-fit">
         <ImgRoundIncorrect className="size-[48px]" />
         <Text typo="h2" color="incorrect">
-          오답
+          {t('daily.home_page.incorrect_answer')}
         </Text>
       </div>
 
@@ -634,14 +662,15 @@ const IncorrectAnswerBody = ({
 
       <div className="grid gap-3">
         <Text typo="subtitle-1-bold">
-          정답: {currQuiz.quizType === 'MULTIPLE_CHOICE' ? currQuiz.answer : currQuiz.answer === 'correct' ? 'O' : 'X'}
+          {t('common.answer')}:{' '}
+          {currQuiz.quizType === 'MULTIPLE_CHOICE' ? currQuiz.answer : currQuiz.answer === 'correct' ? 'O' : 'X'}
         </Text>
         <Text typo="body-1-medium" as="p" color="secondary">
           {currQuiz.explanation}
         </Text>
         <div className="mt-[24px] flex items-center">
           <Text typo="body-1-medium" color="sub">
-            출처
+            {t('daily.home_page.source')}
           </Text>
 
           <div className="h-[12px] w-px bg-gray-100 mx-2" />
@@ -667,7 +696,7 @@ const IncorrectAnswerBody = ({
           moveToNextQuiz(currQuiz!)
         }}
       >
-        문제 전환
+        {t('daily.home_page.switch_question')}
       </Button>
     </>
   )
@@ -676,6 +705,7 @@ const IncorrectAnswerBody = ({
 const NotificationDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChange: (value: boolean) => void }) => {
   const { setupMessaging, isReadyNotification } = useMessaging()
   const { mutate: updateNotification } = useUpdateQuizNotification()
+  const { t, currentLanguage } = useTranslation()
 
   const clickNotification = async () => {
     const callbackAfterPermission = (permission?: boolean) => {
@@ -694,19 +724,23 @@ const NotificationDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChang
       <DrawerContent height="md" hasHandle={false} className="flex flex-col items-center">
         <DrawerHeader className="w-full flex-center flex-col gap-[8px] py-[10px]">
           <Text typo="h4" className="text-center">
-            푸시 알림 허용 안내
+            {t('daily.home_page.notification_permission_guide')}
           </Text>
           <Text typo="subtitle-2-medium" color="sub" className="text-center">
-            다음 단계에서 알림을 허용하시면
+            {t('daily.home_page.notification_permission_message1')}
             <br />
-            매일 잊지 않고 퀴즈를 풀 수 있어요
+            {t('daily.home_page.notification_permission_message2')}
           </Text>
         </DrawerHeader>
 
-        <ImgPush height={200} width={301.25} />
+        {currentLanguage === 'ko-KR' ? (
+          <ImgPush height={200} width={301.25} />
+        ) : (
+          <ImgPushEng height={200} width={301.25} />
+        )}
 
         <DrawerFooter className="w-full pt-[14px] px-[20px] h-[90px] flex flex-col">
-          <Button onClick={clickNotification}>설정하기</Button>
+          <Button onClick={clickNotification}>{t('daily.home_page.setup_button')}</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -714,7 +748,7 @@ const NotificationDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChang
 }
 
 export default withHOC(HomePage, {
-  activeTab: '데일리',
+  activeTab: 'DAILY',
   backgroundClassName: 'bg-surface-2',
   navClassName: 'border-none',
 })

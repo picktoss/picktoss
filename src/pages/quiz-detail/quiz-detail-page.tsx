@@ -51,16 +51,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu'
+import Loading from '@/shared/components/ui/loading'
 import { Text } from '@/shared/components/ui/text'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useRouter } from '@/shared/lib/router'
 import { StorageKey, useLocalStorage, useSessionStorage } from '@/shared/lib/storage'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const QuizDetailPage = () => {
   const { trackEvent } = useAmplitude()
   const router = useRouter()
 
   const [_, setRedirectUrl] = useLocalStorage(StorageKey.redirectUrl, '')
+  const { t } = useTranslation()
 
   const { noteId } = useParams()
 
@@ -145,15 +148,15 @@ const QuizDetailPage = () => {
           })
 
           if (optimisticIsBookmarked) {
-            toast('퀴즈가 도서관에 저장되었어요', {
+            toast(t('quizDetail.toast.bookmark_success'), {
               icon: <IcBookmarkFilled className="size-4" />,
               action: {
-                label: '보러가기',
+                label: t('quizDetail.quiz_detail_page.view_button'),
                 onClick: () => router.push(`/library`, { search: { tab: 'BOOKMARK' } }),
               },
             })
           } else {
-            toast('북마크가 해제되었어요')
+            toast(t('quizDetail.toast.bookmark_removed'))
           }
         },
         onError: () => {
@@ -186,7 +189,7 @@ const QuizDetailPage = () => {
         console.error('공유 실패', error)
       }
     } else {
-      alert('이 브라우저에서는 공유 기능을 지원하지 않습니다.')
+      alert(t('quizDetail.alert.share_not_supported'))
     }
   }
 
@@ -204,7 +207,7 @@ const QuizDetailPage = () => {
     })
   }
 
-  if (isDocumentLoading) return null
+  if (isDocumentLoading) return <Loading center />
 
   if (!isDocumentLoading && !document?.isPublic && !document?.isOwner) {
     return <NotFound />
@@ -233,7 +236,7 @@ const QuizDetailPage = () => {
                         })
                       }
                     >
-                      퀴즈 정보 수정
+                      {t('quizDetail.quiz_detail_page.edit_quiz_info_button')}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
@@ -244,7 +247,7 @@ const QuizDetailPage = () => {
                       setDeleteDocumentDialogOpen(true)
                     }}
                   >
-                    퀴즈 삭제
+                    {t('quizDetail.quiz_detail_page.delete_quiz_button')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -261,7 +264,7 @@ const QuizDetailPage = () => {
                     right={<IcWarning className="text-icon-critical size-[20px]" />}
                     onClick={handleComplain}
                   >
-                    퀴즈 신고
+                    {t('quizDetail.quiz_detail_page.report_quiz_button')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -315,21 +318,21 @@ const QuizDetailPage = () => {
             <div className="flex flex-col justify-start items-center gap-3">
               <div className="w-56 flex flex-col justify-start items-center gap-3">
                 <Text typo="body-1-bold" color="secondary">
-                  풀 문제 수
+                  {t('quizDetail.quiz_detail_page.questions_to_solve')}
                 </Text>
                 <Drawer>
                   <DrawerTrigger asChild>
                     <button className="h-[48px] w-[231px] px-4 py-[15px] bg-base-1 rounded-lg border border-outline">
                       <div className="flex-1 flex justify-between items-center">
                         <Text typo="button-2" className="text-gray-800">
-                          {selectedQuizCount}문제
+                          {t('quizDetail.quiz_detail_page.question_count', { count: selectedQuizCount })}
                         </Text>
                         <IcChevronDown className="size-[16px] text-icon-secondary" />
                       </div>
                     </button>
                   </DrawerTrigger>
                   <DrawerContent className="px-[20px]!">
-                    <DrawerTitle>문제 수 선택</DrawerTitle>
+                    <DrawerTitle>{t('quizDetail.quiz_detail_page.select_question_count_title')}</DrawerTitle>
                     <div className="mt-[22px]">
                       <div className="flex flex-col">
                         {[5, 10, 20, 30, 50, 100].map((count) => {
@@ -352,7 +355,7 @@ const QuizDetailPage = () => {
                                   typo="subtitle-2-medium"
                                   color={selectedQuizCount === count ? 'accent' : 'primary'}
                                 >
-                                  {count}문제
+                                  {t('quizDetail.quiz_detail_page.question_count', { count: count })}
                                 </Text>
                                 {selectedQuizCount === count && <IcCheck className="size-[24px] text-icon-accent" />}
                               </button>
@@ -372,7 +375,7 @@ const QuizDetailPage = () => {
                               typo="subtitle-2-medium"
                               color={selectedQuizCount === (document?.quizzes?.length || 0) ? 'accent' : 'primary'}
                             >
-                              최대
+                              {t('quizDetail.quiz_detail_page.maximum')}
                             </Text>
                             {selectedQuizCount === (document?.quizzes?.length || 0) && (
                               <IcCheck className="size-[24px] text-icon-accent" />
@@ -386,11 +389,13 @@ const QuizDetailPage = () => {
               </div>
               {document?.quizzes.length === selectedQuizCount ? (
                 <Text typo="body-1-medium" color="sub">
-                  모든 문제가 출제돼요
+                  {t('quizDetail.quiz_detail_page.all_questions_will_be_asked')}
                 </Text>
               ) : (
                 <Text typo="body-1-medium" color="sub">
-                  총 {document?.quizzes.length}문제 중 {selectedQuizCount}문제가 무작위로 출제돼요
+                  {t('quizDetail.quiz_detail_page.total_questions')} {document?.quizzes.length}
+                  {t('quizDetail.quiz_detail_page.selected_questions')} {selectedQuizCount}
+                  {t('quizDetail.quiz_detail_page.random_questions_will_be_asked')}
                 </Text>
               )}
             </div>
@@ -427,7 +432,7 @@ const QuizDetailPage = () => {
               )
             }}
           >
-            퀴즈 시작
+            {t('quizDetail.quiz_detail_page.start_quiz_button')}
           </Button>
         </div>
 
@@ -442,7 +447,7 @@ const QuizDetailPage = () => {
           >
             <IcList className="size-6" />
             <Text typo="body-2-bold" color="sub">
-              문제보기
+              {t('quizDetail.quiz_detail_page.view_questions_button')}
             </Text>
           </button>
           <div className="w-px h-[48px] bg-gray-100" />
@@ -457,25 +462,25 @@ const QuizDetailPage = () => {
                 <button className="flex flex-col items-center gap-2 px-5">
                   <IcUpload className="size-6" />
                   <Text typo="body-2-bold" color="sub">
-                    공유하기
+                    {t('quizDetail.quiz_detail_page.share_button')}
                   </Text>
                 </button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader className="typo-h4">퀴즈를 공개하시겠어요?</DialogHeader>
+                <DialogHeader className="typo-h4">{t('quizDetail.quiz_detail_page.public_confirm_title')}</DialogHeader>
                 <DialogDescription className="text-center mt-2 text-sub">
-                  픽토스에 퀴즈가 공개된 상태여야
+                  {t('quizDetail.quiz_detail_page.public_confirm_message')}
                   <br />
-                  공유할 수 있어요
+                  {t('quizDetail.quiz_detail_page.public_confirm_action')}
                 </DialogDescription>
                 <DialogCTA
-                  label="퀴즈 공개하기"
+                  label={t('quizDetail.quiz_detail_page.make_public_button')}
                   onClick={() =>
                     updateDocumentIsPublic(
                       { isPublic: true },
                       {
                         onSuccess: async () => {
-                          toast('퀴즈가 공개되었어요')
+                          toast(t('quizDetail.toast.public_success'))
                           await refetchDocument()
                           setIsShareDialogOpen(false)
                         },
@@ -492,7 +497,7 @@ const QuizDetailPage = () => {
             <button className="flex flex-col items-center gap-2 px-5" onClick={() => handleShare()}>
               <IcUpload className="size-6" />
               <Text typo="body-2-bold" color="sub">
-                공유하기
+                {t('quizDetail.quiz_detail_page.share_button')}
               </Text>
             </button>
           )}
@@ -502,7 +507,7 @@ const QuizDetailPage = () => {
               <button className="flex flex-col items-center gap-2 px-5" onClick={handleBookmark}>
                 {isBookmarked ? <IcBookmarkFilled className="size-6" /> : <IcBookmark className="size-6" />}
                 <Text typo="body-2-bold" color="sub">
-                  저장하기
+                  {t('quizDetail.quiz_detail_page.save_button')}
                 </Text>
               </button>
             </>
@@ -514,22 +519,22 @@ const QuizDetailPage = () => {
       <SystemDialog
         open={deleteDocumentDialogOpen}
         onOpenChange={setDeleteDocumentDialogOpen}
-        title="퀴즈를 삭제하시겠어요?"
+        title={t('quizDetail.quiz_detail_page.delete_confirm_title')}
         content={
-          <Text typo="body-1-medium" color="sub" className="break-normal whitespace-pre-line">
-            선택한 퀴즈와{' '}
+          <Text typo="body-1-medium" color="sub">
+            {t('quizDetail.quiz_detail_page.delete_confirm_message')}{' '}
             <Text as="span" typo="body-1-medium" color="incorrect">
-              {`${document?.quizzes.length}개의 문제`}
+              {t('quizDetail.quiz_detail_page.delete_confirm_count', { count: document?.quizzes.length })}
             </Text>
-            가 모두 삭제되며, 복구할 수 없어요
+            {t('quizDetail.quiz_detail_page.delete_confirm_warning')}
           </Text>
         }
         variant="critical"
-        confirmLabel="삭제"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           deleteDocument({ documentIds: [Number(noteId)] })
           router.replace('/library')
-          toast('퀴즈가 삭제되었습니다.')
+          toast(t('quizDetail.toast.delete_quiz_success'))
         }}
       />
 

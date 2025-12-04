@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import { isDesktop, isMobile } from 'react-device-detect'
 
 import { IcClose } from '@/shared/assets/icon'
-import { ImgPush } from '@/shared/assets/images'
+import { ImgPush, ImgPushEng } from '@/shared/assets/images'
 import { Text } from '@/shared/components/ui/text'
 import useBreakpoint from '@/shared/hooks/use-breakpoint'
 import { usePWA } from '@/shared/hooks/use-pwa'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 export const useSideAppDownloadPopup = () => {
   const { isPWA } = usePWA()
   const { isDesktopSize } = useBreakpoint()
   const [isSideAppDownloadPopupOpen, setIsSideAppDownloadPopupOpen] = useState(!isPWA && isDesktop && isDesktopSize)
+
+  const { t, currentLanguage } = useTranslation()
 
   useEffect(() => {
     if (!isPWA && isDesktop && isDesktopSize) {
@@ -30,10 +33,10 @@ export const useSideAppDownloadPopup = () => {
 
         <div className="flex-center flex-col">
           <div className="flex-center flex-col gap-[4px]">
-            <Text typo="subtitle-1-bold">확실한 성장의 시작</Text>
+            <Text typo="subtitle-1-bold">{t('etc.side_app_download_popup.title')}</Text>
             <Text typo="body-1-bold" color="sub" className="text-center">
-              3초만에 픽토스 앱 다운받고 <br />
-              매일 간편하게 퀴즈 풀어보세요!
+              {t('etc.side_app_download_popup.message1')} <br />
+              {t('etc.side_app_download_popup.message2')}
             </Text>
             <div className="pt-[20px] pb-[16px]">
               <div className="relative size-[96px] w-full flex-center">
@@ -43,14 +46,20 @@ export const useSideAppDownloadPopup = () => {
 
                 <img
                   src="/images/QR_picktoss_app_install.png"
-                  alt="픽토스 앱 다운로드 QR코드"
+                  alt="QR code to download the Picktoss app"
                   className="w-[83.38px] h-[83.38px]"
                 />
               </div>
             </div>
           </div>
 
-          <ImgPush className="w-[232px] h-[154.67px]" />
+          {/* <ImgPush className="w-[232px] h-[154.67px]" /> */}
+
+          {currentLanguage === 'ko-KR' ? (
+            <ImgPush height={154.67} width={232} />
+          ) : (
+            <ImgPushEng height={154.67} width={232} />
+          )}
         </div>
       </div>
     )

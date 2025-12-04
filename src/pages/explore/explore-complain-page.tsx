@@ -9,9 +9,11 @@ import { BackButton } from '@/shared/components/buttons/back-button'
 import { Header } from '@/shared/components/header'
 import { Text } from '@/shared/components/ui/text'
 import { useQueryParam } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const ExploreComplainPage = () => {
   const [name] = useQueryParam('/explore/complain/:noteId', 'name')
+  const { t } = useTranslation()
 
   useEffect(() => {
     const root = window.document.getElementById('root')
@@ -22,13 +24,13 @@ const ExploreComplainPage = () => {
 
   return (
     <>
-      <Header left={<BackButton />} title="퀴즈 신고" />
+      <Header left={<BackButton />} title={t('explore.complain_form.report_quiz_title')} />
 
       <HeaderOffsetLayout>
         <div className="pt-[20px] px-[16px] flex flex-col gap-[40px]">
           <div className="flex flex-col gap-[8px]">
             <Text typo="body-1-bold" color="sub">
-              신고할 퀴즈
+              {t('explore.complain_form.report_quiz_label')}
             </Text>
             <Text typo="subtitle-1-bold">{name}</Text>
           </div>

@@ -28,9 +28,11 @@ import { Skeleton } from '@/shared/components/ui/skeleton'
 import { Switch } from '@/shared/components/ui/switch'
 import { Text } from '@/shared/components/ui/text'
 import { useRouter } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const QuizDetailEditPage = () => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const { noteId } = useParams()
 
@@ -163,11 +165,11 @@ const QuizDetailEditPage = () => {
 
     try {
       await Promise.all(promises)
-      toast('퀴즈 정보가 저장되었습니다')
+      toast(t('quizDetail.toast.save_quiz_success'))
       await refetchDocument()
       router.back()
-    } catch (error) {
-      toast('저장 중 오류가 발생했습니다')
+    } catch {
+      toast(t('quizDetail.toast.save_quiz_error'))
     }
   }
 
@@ -190,7 +192,7 @@ const QuizDetailEditPage = () => {
         left={<BackButton />}
         content={
           <Text typo="subtitle-2-medium" className="text-center">
-            퀴즈 정보
+            {t('quizDetail.quiz_detail_edit_page.quiz_info_title')}
           </Text>
         }
       />
@@ -198,9 +200,9 @@ const QuizDetailEditPage = () => {
       <HeaderOffsetLayout className="flex-1 overflow-auto pt-[54px]">
         <div className="px-4 py-3 bg-surface-2 flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <Text typo="body-1-medium">공개 퀴즈</Text>
+            <Text typo="body-1-medium">{t('quizDetail.quiz_detail_edit_page.public_quiz_label')}</Text>
             <Text typo="body-2-medium" color="caption">
-              *다른 사람들도 퀴즈를 풀어볼 수 있어요
+              {t('quizDetail.quiz_detail_edit_page.public_quiz_description')}
             </Text>
           </div>
           <Switch checked={isPublic} onCheckedChange={handlePublicToggle} />
@@ -234,20 +236,24 @@ const QuizDetailEditPage = () => {
               variant="tertiary"
               className="w-fit h-[28px] w-[60px]"
             >
-              변경
+              {t('quizDetail.quiz_detail_edit_page.change_button')}
             </Button>
           </div>
 
           <div className="space-y-2">
             <Text typo="body-1-bold" color="sub">
-              퀴즈 제목 <span className="text-accent">*</span>
+              {t('quizDetail.quiz_detail_edit_page.quiz_title_label')} <span className="text-accent">*</span>
             </Text>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="퀴즈 제목을 입력해주세요" />
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t('quizDetail.quiz_detail_edit_page.quiz_title_placeholder')}
+            />
           </div>
 
           <div className="space-y-2">
             <Text typo="body-1-bold" color="sub">
-              카테고리 <span className="text-accent">*</span>
+              {t('quizDetail.quiz_detail_edit_page.category_label')} <span className="text-accent">*</span>
             </Text>
             <div className="flex items-center gap-5">
               <Text typo="subtitle-2-medium" color="secondary">
@@ -261,13 +267,13 @@ const QuizDetailEditPage = () => {
                     variant="tertiary"
                     className="w-fit h-[28px] w-[60px]"
                   >
-                    변경
+                    {t('quizDetail.quiz_detail_edit_page.change_button')}
                   </Button>
                 }
                 open={categoryDrawerOpen}
                 onOpenChange={setCategoryDrawerOpen}
                 hasClose
-                title="카테고리 변경"
+                title={t('quizDetail.quiz_detail_edit_page.change_category_title')}
                 body={
                   <div className="py-8">
                     <RadioGroup
@@ -295,7 +301,7 @@ const QuizDetailEditPage = () => {
                       }}
                       disabled={!selectedCategoryId}
                     >
-                      완료
+                      {t('quizDetail.quiz_detail_edit_page.complete_button')}
                     </Button>
                   </div>
                 }
@@ -309,16 +315,16 @@ const QuizDetailEditPage = () => {
       <SystemDialog
         open={showPrivateConfirmDialog}
         onOpenChange={setShowPrivateConfirmDialog}
-        title="퀴즈를 비공개로 처리하시겠어요?"
+        title={t('quizDetail.quiz_detail_edit_page.make_private_confirm_title')}
         content={
           <Text typo="body-1-medium" color="sub">
-            내 퀴즈 공유가 불가능하며,
+            {t('quizDetail.quiz_detail_edit_page.make_private_confirm_message')}
             <br />
-            다른 사람들의 풀이 및 저장 정보가 삭제돼요
+            {t('quizDetail.quiz_detail_edit_page.make_private_confirm_warning')}
           </Text>
         }
         variant="critical"
-        confirmLabel="확인"
+        confirmLabel={t('common.confirm')}
         onConfirm={() => {
           setShowPrivateConfirmDialog(false)
           handleSave()
@@ -347,7 +353,9 @@ const QuizDetailEditPage = () => {
           }
           className="w-full"
         >
-          {isLoading ? '저장 중...' : '저장'}
+          {isLoading
+            ? t('quizDetail.quiz_detail_edit_page.saving_message')
+            : t('quizDetail.quiz_detail_edit_page.save_button')}
         </Button>
       </div>
     </div>

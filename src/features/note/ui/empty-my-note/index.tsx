@@ -2,9 +2,11 @@ import { ImgNoteEmpty } from '@/shared/assets/images'
 import { Button } from '@/shared/components/ui/button'
 import { Text } from '@/shared/components/ui/text'
 import { useRouter } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const EmptyMyNote = () => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   return (
     <div className="size-full flex-center flex-col gap-[32px]">
@@ -12,10 +14,10 @@ const EmptyMyNote = () => {
         <ImgNoteEmpty className="size-[120px]" />
 
         <div className="flex-center flex-col gap-[8px]">
-          <Text typo="subtitle-1-bold">생성한 퀴즈가 없어요</Text>
+          <Text typo="subtitle-1-bold">{t('library.empty_my_note.title')}</Text>
           <Text typo="body-1-medium" color="sub" className="text-center">
-            내가 공부하는 노트에서 <br />
-            간편하게 퀴즈를 만들어 보세요
+            {t('library.empty_my_note.description')} <br />
+            {t('library.empty_my_note.action')}
           </Text>
         </div>
       </div>
@@ -31,7 +33,7 @@ const EmptyMyNote = () => {
           })
         }
       >
-        퀴즈 생성하기
+        {t('common.generate')}
       </Button>
     </div>
   )

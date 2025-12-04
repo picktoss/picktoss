@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 
+import { format } from 'date-fns'
 import html2pdf from 'html2pdf.js'
 import { toast } from 'sonner'
 import { useStore } from 'zustand'
@@ -51,10 +52,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { cn } from '@/shared/lib/utils'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const NoteDetailPage = () => {
   const { trackEvent } = useAmplitude()
   const router = useRouter()
+  const { t } = useTranslation()
 
   const token = useStore(useAuthStore, (state) => state.token)
 
@@ -63,6 +66,9 @@ const NoteDetailPage = () => {
   const [showMixUp, setShowMixUp] = useState(false)
   const [showAnswer, setShowAnswer] = useQueryParam('/quiz-detail/:noteId/list', 'showAnswer')
   const { data: document, isLoading: isDocumentLoading } = useGetDocument(Number(noteId))
+
+  const defaultDateString = useMemo(() => new Date().toUTCString(), [])
+  const createdDate = useMemo(() => new Date(document?.createdAt ?? defaultDateString), [document, defaultDateString])
 
   const [deleteTargetQuizId, setDeleteTargetQuizId] = useState<number | null>(null)
   const [deleteDocumentDialogOpen, setDeleteDocumentDialogOpen] = useState(false)
@@ -188,12 +194,12 @@ const NoteDetailPage = () => {
         .then(() => {
           // 원래 상태로 복원
           setShowAnswer(originalShowAnswer)
-          toast('퀴즈가 PDF로 저장되었습니다.')
+          toast(t('quizDetail.toast.create_pdf_success'))
           trackEvent('library_detail_download_click')
         })
         .catch((err: Error) => {
           console.error('PDF 생성 오류:', err)
-          toast('PDF 생성 중 오류가 발생했습니다.')
+          toast(t('quizDetail.toast.create_pdf_error'))
           setShowAnswer(originalShowAnswer)
         })
     }, 500) // 렌더링에 시간 주기
@@ -259,15 +265,15 @@ const NoteDetailPage = () => {
           })
 
           if (optimisticIsBookmarked) {
-            toast('퀴즈가 도서관에 저장되었어요', {
+            toast(t('quizDetail.toast.bookmark_success'), {
               icon: <IcBookmarkFilled className="size-4" />,
               action: {
-                label: '보러가기',
+                label: t('quizDetail.quiz_detail_page.view_button'),
                 onClick: () => router.push(`/library`, { search: { tab: 'BOOKMARK' } }),
               },
             })
           } else {
-            toast('북마크가 해제되었어요')
+            toast(t('quizDetail.toast.bookmark_removed'))
           }
         },
         onError: () => {
@@ -294,7 +300,7 @@ const NoteDetailPage = () => {
                 {document?.name}
               </Text>
               <Text typo="body-2-medium" color="sub">
-                {document?.quizzes.length}문제
+                {t('quizDetail.quiz_detail_list_page.quiz_count', { count: document?.quizzes.length })}
               </Text>
             </div>
             <div className="ml-auto flex items-center gap-[2px]">
@@ -311,7 +317,7 @@ const NoteDetailPage = () => {
                   )}
                 </TooltipTrigger>
                 <TooltipContent align="end" side="bottom" color="inverse">
-                  데일리에서 매일 풀 수 있어요
+                  {t('quizDetail.quiz_detail_list_page.daily_available_message')}
                 </TooltipContent>
               </Tooltip>
               <DropdownMenu>
@@ -330,16 +336,16 @@ const NoteDetailPage = () => {
                         })
                       }
                     >
-                      퀴즈 정보 수정
+                      {t('quizDetail.quiz_detail_list_page.edit_quiz_info_button')}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem right={<IcDownload />} onClick={handleDownloadQuizAsPdf}>
-                    문제 다운로드
+                    {t('quizDetail.quiz_detail_list_page.download_questions_button')}
                   </DropdownMenuItem>
                   {document?.isOwner && (
                     <>
                       {/* <DropdownMenuItem right={<IcNote />} onClick={() => setContentDrawerOpen(true)}>
-                    원본 문서
+                    {t('quizDetail.quiz_detail_list_page.original_document_button')}
                   </DropdownMenuItem> */}
                       <DropdownMenuItem
                         className="text-red-500"
@@ -349,7 +355,7 @@ const NoteDetailPage = () => {
                           setDeleteDocumentDialogOpen(true)
                         }}
                       >
-                        퀴즈 삭제
+                        {t('quizDetail.quiz_detail_list_page.delete_quiz_button')}
                       </DropdownMenuItem>
                     </>
                   )}
@@ -369,7 +375,13 @@ const NoteDetailPage = () => {
           >
             <IcReview className="size-5" />
             <Text typo="body-1-bold" color="secondary">
-              틀렸던 문제 <span className="text-accent">{document?.reviewNeededQuizzes?.length ?? 0}개</span> 확인하기
+              {t('quizDetail.quiz_detail_list_page.review_questions_count')}{' '}
+              <span className="text-accent">
+                {t('quizDetail.quiz_detail_list_page.review_questions_count_unit', {
+                  count: document?.reviewNeededQuizzes?.length ?? 0,
+                })}
+              </span>{' '}
+              {t('quizDetail.quiz_detail_list_page.check_button')}
             </Text>
           </button>
         )}
@@ -382,7 +394,7 @@ const NoteDetailPage = () => {
               )}
               onClick={() => setShowMultipleChoice(!showMultipleChoice)}
             >
-              객관식
+              {t('common.multiple_choice')}
             </button>
             <button
               className={cn(
@@ -391,12 +403,12 @@ const NoteDetailPage = () => {
               )}
               onClick={() => setShowMixUp(!showMixUp)}
             >
-              O/X
+              {t('quizDetail.quiz_detail_list_page.ox_label')}
             </button>
           </div>
           <div className="flex items-center gap-2">
             <Text typo="body-2-bold" color="sub">
-              정답 표시
+              {t('quizDetail.quiz_detail_list_page.show_answer_button')}
             </Text>
             <Switch
               checked={showAnswer}
@@ -433,14 +445,14 @@ const NoteDetailPage = () => {
                             trackEvent('library_quiz_edit_click')
                           }}
                         >
-                          수정
+                          {t('quizDetail.quiz_detail_list_page.edit_button')}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-500"
                           right={<IcDelete className="text-icon-critical" />}
                           onClick={() => setDeleteTargetQuizId(quiz.id)}
                         >
-                          삭제
+                          {t('common.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -491,7 +503,7 @@ const NoteDetailPage = () => {
           }
         }}
         hasClose={false}
-        title="문제 편집"
+        title={t('quizDetail.quiz_detail_list_page.edit_question_title')}
         height="full"
         body={
           <div>
@@ -587,7 +599,7 @@ const NoteDetailPage = () => {
                 // 변경사항이 있을 경우 API 호출
                 updateQuiz(newData, {
                   onError: () => {
-                    toast('퀴즈 편집에 실패했습니다.')
+                    toast(t('quizDetail.toast.edit_failed'))
                   },
                   onSettled: () => {
                     // 드로어 닫기
@@ -607,7 +619,9 @@ const NoteDetailPage = () => {
                       onClick={handleUpdateQuizSubmit}
                       disabled={isUpdating}
                     >
-                      {isUpdating ? '저장중' : '완료'}
+                      {isUpdating
+                        ? t('quizDetail.quiz_detail_list_page.save_button')
+                        : t('quizDetail.quiz_detail_list_page.complete_button')}
                     </TextButton>
                   </div>
 
@@ -621,7 +635,7 @@ const NoteDetailPage = () => {
                       }}
                     >
                       <Input
-                        label="질문"
+                        label={t('quizDetail.quiz_detail_list_page.question_label')}
                         value={question}
                         onChange={(e) => {
                           setQuestion(e.target.value)
@@ -632,7 +646,9 @@ const NoteDetailPage = () => {
                         }}
                         className="text-secondary"
                         hasError={errors.question}
-                        helperText={errors.question ? '질문을 입력해주세요' : ''}
+                        helperText={
+                          errors.question ? t('quizDetail.quiz_detail_list_page.question_required_error') : ''
+                        }
                       />
 
                       {quiz.quizType === 'MIX_UP' ? (
@@ -699,7 +715,11 @@ const NoteDetailPage = () => {
                                   }}
                                   className="text-secondary flex-1"
                                   hasError={errors.options[index]}
-                                  helperText={errors.options[index] ? '내용을 입력해주세요' : ''}
+                                  helperText={
+                                    errors.options[index]
+                                      ? t('quizDetail.quiz_detail_list_page.option_required_error')
+                                      : ''
+                                  }
                                 />
                               </div>
                             ))}
@@ -709,7 +729,7 @@ const NoteDetailPage = () => {
 
                       <div className="mt-5">
                         <Textarea
-                          label="해설"
+                          label={t('quizDetail.quiz_detail_list_page.explanation_label')}
                           value={explanation}
                           onChange={(e) => {
                             setExplanation(e.target.value)
@@ -720,7 +740,9 @@ const NoteDetailPage = () => {
                           }}
                           className="text-secondary"
                           hasError={errors.explanation}
-                          helperText={errors.explanation ? '해설을 입력해주세요' : ''}
+                          helperText={
+                            errors.explanation ? t('quizDetail.quiz_detail_list_page.explanation_required_error') : ''
+                          }
                         />
                       </div>
                     </form>
@@ -736,7 +758,7 @@ const NoteDetailPage = () => {
       <Drawer open={reviewPickOpen} onOpenChange={setReviewPickOpen}>
         <DrawerContent height="full" className="pb-[40px]">
           <DrawerHeader>
-            <DrawerTitle>복습 Pick</DrawerTitle>
+            <DrawerTitle>{t('quizDetail.quiz_detail_list_page.review_pick_title')}</DrawerTitle>
           </DrawerHeader>
           <div className="overflow-y-scroll mt-[20px] flex flex-col gap-2">
             {document?.reviewNeededQuizzes.map((quiz) => (
@@ -745,7 +767,7 @@ const NoteDetailPage = () => {
                   <QuestionCard.Header
                     right={
                       <Tag size="md" color="red">
-                        오답
+                        {t('common.incorrect')}
                       </Tag>
                     }
                   />
@@ -774,9 +796,11 @@ const NoteDetailPage = () => {
       <Drawer open={contentDrawerOpen} onOpenChange={setContentDrawerOpen}>
         <DrawerContent height="full">
           <DrawerHeader>
-            <DrawerTitle>원본 노트</DrawerTitle>
+            <DrawerTitle>{t('quizDetail.quiz_detail_list_page.original_note_title')}</DrawerTitle>
             <DrawerDescription>
-              {document?.createdAt.split('T')[0].split('-').join('.')} 등록 / {document?.content?.length}자
+              {format(createdDate, 'yyyy.MM.dd')} {t('quizDetail.quiz_detail_list_page.registered_date')} /{' '}
+              {document?.content?.length}
+              {t('quizDetail.quiz_detail_list_page.characters')}
             </DrawerDescription>
           </DrawerHeader>
           <div className="mt-5 flex-1 overflow-y-scroll pb-10">
@@ -796,13 +820,15 @@ const NoteDetailPage = () => {
           }}
         >
           <DialogContent className="pt-[24px] px-[20px] pb-[8px] w-[280px]">
-            <DialogTitle className="typo-subtitle-2-bold text-center">문제를 삭제할까요?</DialogTitle>
+            <DialogTitle className="typo-subtitle-2-bold text-center">
+              {t('quizDetail.quiz_detail_list_page.delete_question_confirm_title')}
+            </DialogTitle>
             <DialogDescription className="typo-body-1-medium text-sub text-center mt-1">
-              삭제한 문제는 다시 복구할 수 없어요
+              {t('quizDetail.quiz_detail_list_page.delete_question_confirm_message')}
             </DialogDescription>
             <div className="flex gap-2.5 mt-[20px]">
               <DialogClose asChild>
-                <button className="h-[48px] flex-1 text-sub">취소</button>
+                <button className="h-[48px] flex-1 text-sub">{t('common.cancel')}</button>
               </DialogClose>
               <button
                 className="h-[48px] flex-1 text-red-500"
@@ -814,7 +840,7 @@ const NoteDetailPage = () => {
                   setDeleteTargetQuizId(null)
                 }}
               >
-                삭제
+                {t('common.delete')}
               </button>
             </div>
           </DialogContent>
@@ -825,22 +851,22 @@ const NoteDetailPage = () => {
       <SystemDialog
         open={deleteDocumentDialogOpen}
         onOpenChange={setDeleteDocumentDialogOpen}
-        title="퀴즈를 삭제하시겠어요?"
+        title={t('quizDetail.quiz_detail_list_page.delete_quiz_confirm_title')}
         content={
           <Text typo="body-1-medium" color="sub" className="break-normal whitespace-pre-line">
-            선택한 퀴즈와{' '}
+            {t('quizDetail.quiz_detail_list_page.delete_quiz_confirm_message')}{' '}
             <Text as="span" typo="body-1-medium" color="incorrect">
-              {`${document?.quizzes.length}개의 문제`}
+              {t('quizDetail.quiz_detail_list_page.delete_quiz_confirm_count', { count: document?.quizzes.length })}
             </Text>
-            가 모두 삭제되며, 복구할 수 없어요
+            {t('quizDetail.quiz_detail_list_page.delete_quiz_confirm_warning')}
           </Text>
         }
         variant="critical"
-        confirmLabel="삭제"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           deleteDocument({ documentIds: [Number(noteId)] })
           router.replace('/library')
-          toast('퀴즈가 삭제되었습니다.')
+          toast(t('quizDetail.toast.delete_quiz_success'))
         }}
       />
 

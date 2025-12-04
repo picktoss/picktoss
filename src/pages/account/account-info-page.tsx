@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import imageCompression from 'browser-image-compression'
 import { toast } from 'sonner'
 
 import { withHOC } from '@/app/hoc/with-page-config'
@@ -17,12 +17,12 @@ import { BackButton } from '@/shared/components/buttons/back-button'
 import { Header } from '@/shared/components/header'
 import { SystemDialog } from '@/shared/components/system-dialog'
 import { Input } from '@/shared/components/ui/input'
-import Loading from '@/shared/components/ui/loading'
 import { Text } from '@/shared/components/ui/text'
 import { TextButton } from '@/shared/components/ui/text-button'
 import { RoutePath, useRouter } from '@/shared/lib/router'
 
 const AccountInfoPage = () => {
+  const { t } = useTranslation()
   const router = useRouter()
 
   const { clearToken } = useAuthStore()
@@ -32,8 +32,6 @@ const AccountInfoPage = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState<boolean>(false)
   const [newName, setNewName] = useState<string>('')
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
-
-  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false)
 
   const { mutate: updateMemberName, isPending } = useUpdateMemberName()
   const { mutate: updateMemberImage } = useUpdateMemberImage()
@@ -67,7 +65,7 @@ const AccountInfoPage = () => {
       { name: newName },
       {
         onSuccess: () => {
-          toast('닉네임이 변경되었어요')
+          toast(t('profile.toast.nickname_changed'))
           setNameDialogOpen(false)
           setNewName(user?.name ?? '')
         },
@@ -90,39 +88,23 @@ const AccountInfoPage = () => {
     const prevState = user?.image
 
     const file = e.target.files?.[0]
-
     if (file) {
-      setIsUploadingImage(true)
-      // 목적: 긴 변 기준 1024px, 목표 300KB 안팎, WebP 우선
-      const compressedFile = await imageCompression(file, {
-        maxWidthOrHeight: 1024,
-        maxSizeMB: 0.3, // 목표 용량 300KB
-        useWebWorker: true,
-        fileType: 'image/webp', // 브라우저 지원 시 WebP
-        initialQuality: 0.8,
-      })
-
-      console.log(compressedFile)
-
-      const imageString = await convertFileToString(compressedFile)
+      const imageString = await convertFileToString(file)
       setImageUrl(imageString)
 
       updateMemberImage(
-        { image: compressedFile },
+        { image: file },
         {
           onSuccess: () => {
             if (!prevState) {
-              toast('프로필 사진이 등록되었어요')
+              toast(t('profile.toast.profile_image_registered'))
             } else {
-              toast('프로필 사진이 변경되었어요')
+              toast(t('profile.toast.profile_image_changed'))
             }
           },
           onError: (error) => {
-            console.error('이미지 변환 실패:', error)
+            console.error(t('profile.account_info_page.image_conversion_failed'), error)
             setImageUrl(user?.image) // 기존 이미지로 되돌림
-          },
-          onSettled: () => {
-            setIsUploadingImage(false)
           },
         },
       )
@@ -131,146 +113,142 @@ const AccountInfoPage = () => {
 
   return (
     <>
-      <Header left={<BackButton />} title="계정 정보" />
+      <Header left={<BackButton />} title={t('profile.account_info_page.account_info')} />
 
-      {isUploadingImage && <Loading className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+      <HeaderOffsetLayout className="h-full flex flex-col overflow-x-hidden px-[16px] justify-between">
+        <div className="w-full flex flex-col">
+          <div className="flex-center w-full pb-[44px] pt-[24px]">
+            <div className="relative">
+              <div className="flex-center relative size-[96px] overflow-hidden rounded-full bg-base-3">
+                {imageUrl ? (
+                  <img src={imageUrl} alt="" className="object-cover" />
+                ) : (
+                  <IcMy className="size-[56px] text-icon-sub" />
+                )}
+              </div>
+              {/* 이미지 등록 버튼 */}
+              <input
+                type="file"
+                name="file"
+                id="userImage"
+                className="hidden"
+                accept="image/*"
+                onChange={handleChangeImage}
+              />
+              <label
+                htmlFor="userImage"
+                className="flex-center absolute z-10 bottom-0 right-0 size-[32px] cursor-pointer rounded-full border border-outline bg-base-1"
+              >
+                <IcCamera className="size-[16px]" />
+              </label>
+            </div>
+          </div>
 
-      <HeaderOffsetLayout className="size-full overscroll-none">
-        <div className="size-full overflow-y-auto px-[16px] flex flex-col justify-between">
-          <div className="w-full flex flex-col">
-            <div className="flex-center w-full pb-[44px] pt-[24px]">
-              <div className="relative">
-                <div className="flex-center relative size-[96px] overflow-hidden rounded-full bg-base-3">
-                  {imageUrl ? (
-                    <img src={imageUrl} alt="" className="object-cover" />
+          <div className="flex flex-col gap-[32px]">
+            <button
+              type="button"
+              onClick={() => setNameDialogOpen(true)}
+              className="flex w-full items-center justify-between"
+            >
+              <div className="flex flex-col items-start gap-[4px]">
+                <Text typo="body-1-medium" color="sub">
+                  {t('profile.account_info_page.nickname')}
+                </Text>
+
+                <Text typo="subtitle-2-medium">{user?.name}</Text>
+              </div>
+              <IcChevronRight className="size-[16px] text-icon-sub" />
+            </button>
+            <SystemDialog
+              open={nameDialogOpen}
+              onOpenChange={handleSetNameDialogOpen}
+              title={t('profile.account_info_page.change_nickname')}
+              description={t('profile.account_info_page.enter_new_name')}
+              preventClose={isPending}
+              content={
+                <>
+                  {isPending ? (
+                    <div className="animate-pulse text-center">Loading...</div>
                   ) : (
-                    <IcMy className="size-[56px] text-icon-sub" />
+                    <Input
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder={user?.name}
+                      max={10}
+                      hasClear
+                      onClearClick={() => setNewName('')}
+                      helperText={`${t('profile.account_info_page.enter_within_10_chars')} (${newName.length}/10)`}
+                    />
+                  )}
+                </>
+              }
+              onConfirm={handleChangeName}
+              disabledConfirm={newName.length === 0}
+            />
+
+            <InterestedCategoryDrawer interestedCategory={user?.category} />
+
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col items-start gap-[4px]">
+                <Text typo="body-1-medium" color="sub">
+                  {t('profile.account_info_page.email')}
+                </Text>
+
+                <Text typo="subtitle-2-medium" color="primary">
+                  {user?.email ? user.email : t('profile.account_info_page.register_email')}
+                </Text>
+              </div>
+            </div>
+
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col items-start gap-[4px]">
+                <Text typo="body-1-medium" color="sub">
+                  {t('profile.account_info_page.login_info')}
+                </Text>
+                <div className="flex items-center gap-[8px]">
+                  {user?.socialPlatform === 'KAKAO' ? (
+                    <>
+                      <ImgRoundKakao className="size-[20px]" />
+                      <Text typo="subtitle-2-medium">{t('profile.account_info_page.kakao_login')}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <ImgRoundGoogle className="size-[20px]" />
+                      <Text typo="subtitle-2-medium">{t('profile.account_info_page.google_login')}</Text>
+                    </>
                   )}
                 </div>
-                {/* 이미지 등록 버튼 */}
-                <input
-                  type="file"
-                  name="file"
-                  id="userImage"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleChangeImage}
-                />
-                <label
-                  htmlFor="userImage"
-                  className="flex-center absolute z-10 bottom-0 right-0 size-[32px] cursor-pointer rounded-full border border-outline bg-base-1"
-                >
-                  <IcCamera className="size-[16px]" />
-                </label>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-[32px]">
-              <button
-                type="button"
-                onClick={() => setNameDialogOpen(true)}
-                className="flex w-full items-center justify-between"
-              >
-                <div className="flex flex-col items-start gap-[4px]">
-                  <Text typo="body-1-medium" color="sub">
-                    닉네임
-                  </Text>
-
-                  <Text typo="subtitle-2-medium">{user?.name}</Text>
-                </div>
-                <IcChevronRight className="size-[16px] text-icon-sub" />
-              </button>
-              <SystemDialog
-                open={nameDialogOpen}
-                onOpenChange={handleSetNameDialogOpen}
-                title="닉네임 변경"
-                description="새로 사용할 이름을 입력해주세요"
-                preventClose={isPending}
-                content={
-                  <>
-                    {isPending ? (
-                      <div className="animate-pulse text-center">Loading...</div>
-                    ) : (
-                      <Input
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        placeholder={user?.name}
-                        max={10}
-                        hasClear
-                        onClearClick={() => setNewName('')}
-                        helperText={`10자 이내로 입력해주세요 (${newName.length}/10)`}
-                      />
-                    )}
-                  </>
-                }
-                onConfirm={handleChangeName}
-                disabledConfirm={newName.length === 0}
-              />
-
-              <InterestedCategoryDrawer interestedCategory={user?.category} />
-
-              <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col items-start gap-[4px]">
-                  <Text typo="body-1-medium" color="sub">
-                    이메일
-                  </Text>
-
-                  <Text typo="subtitle-2-medium" color="primary">
-                    {user?.email ? user.email : '이메일 주소를 등록해주세요'}
-                  </Text>
-                </div>
-              </div>
-
-              <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col items-start gap-[4px]">
-                  <Text typo="body-1-medium" color="sub">
-                    로그인 정보
-                  </Text>
-                  <div className="flex items-center gap-[8px]">
-                    {user?.socialPlatform === 'KAKAO' ? (
-                      <>
-                        <ImgRoundKakao className="size-[20px]" />
-                        <Text typo="subtitle-2-medium">카카오 로그인</Text>
-                      </>
-                    ) : (
-                      <>
-                        <ImgRoundGoogle className="size-[20px]" />
-                        <Text typo="subtitle-2-medium">구글 로그인</Text>
-                      </>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex-center pb-[56px]">
-            <TextButton
-              onClick={() => setLogoutDialogOpen(true)}
-              variant={'sub'}
-              size={'sm'}
-              className="pr-[16px] border-r border-divider"
-            >
-              로그아웃
-            </TextButton>
-            <SystemDialog
-              open={logoutDialogOpen}
-              onOpenChange={setLogoutDialogOpen}
-              title="로그아웃 하시겠어요?"
-              cancelLabel="취소"
-              confirmLabel="로그아웃"
-              variant="critical"
-              onConfirm={handleLogout}
-            />
-            <TextButton
-              onClick={() => router.push(RoutePath.accountWithdraw)}
-              variant={'sub'}
-              size={'sm'}
-              className="pl-[16px]"
-            >
-              탈퇴하기
-            </TextButton>
-          </div>
+        <div className="flex-center pb-[56px]">
+          <TextButton
+            onClick={() => setLogoutDialogOpen(true)}
+            variant={'sub'}
+            size={'sm'}
+            className="pr-[16px] border-r border-divider"
+          >
+            {t('profile.account_info_page.logout')}
+          </TextButton>
+          <SystemDialog
+            open={logoutDialogOpen}
+            onOpenChange={setLogoutDialogOpen}
+            title={t('profile.account_info_page.confirm_logout')}
+            cancelLabel={t('common.cancel')}
+            confirmLabel={t('profile.account_info_page.logout')}
+            variant="critical"
+            onConfirm={handleLogout}
+          />
+          <TextButton
+            onClick={() => router.push(RoutePath.accountWithdraw)}
+            variant={'sub'}
+            size={'sm'}
+            className="pl-[16px]"
+          >
+            {t('profile.account_info_page.withdraw')}
+          </TextButton>
         </div>
       </HeaderOffsetLayout>
     </>

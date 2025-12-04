@@ -6,6 +6,7 @@ import { QuizAnswerRateAnalysisDto } from '@/entities/quiz/api'
 
 import { Text } from '@/shared/components/ui/text'
 import { isAdjacentDate } from '@/shared/lib/date'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 import MonthGraphItem from '../month-graph-item'
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const MonthGraphContainer = ({ quizDataList, today }: Props) => {
+  const { t } = useTranslation()
   const todayDateString = format(today, 'yyyy-MM-dd')
 
   const maxTotalCount = useMemo(() => {
@@ -34,13 +36,13 @@ const MonthGraphContainer = ({ quizDataList, today }: Props) => {
           <div className="flex items-center gap-[4px]">
             <div className="size-[12px] bg-base-3 rounded-[4px]" />
             <Text as={'span'} typo="caption-medium" color="sub">
-              문제
+              {t('profile.month_graph_container.problem')}
             </Text>
           </div>
           <div className="flex items-center gap-[4px]">
             <div className="size-[12px] bg-orange rounded-[4px]" />
             <Text as={'span'} typo="caption-medium" color="sub">
-              정답
+              {t('profile.month_graph_container.correct_answer')}
             </Text>
           </div>
         </div>
@@ -49,6 +51,7 @@ const MonthGraphContainer = ({ quizDataList, today }: Props) => {
       <div className="relative flex h-[206px] mt-[25px] w-fit gap-[6px]">
         {Array.isArray(quizDataList) &&
           quizDataList.map((data, index) => {
+            const date = new Date(data.date)
             const notSolved = data.totalQuizCount === 0
             const scaleFactor = data.totalQuizCount / maxTotalCount
 
@@ -56,9 +59,13 @@ const MonthGraphContainer = ({ quizDataList, today }: Props) => {
             const rightHeight = notSolved ? 0 : (data.correctAnswerCount / data.totalQuizCount) * 100
 
             const renderDateText =
-              data.date === todayDateString ? '오늘' : isAdjacentDate(data.date) ? '' : format(data.date, 'M.d')
+              format(date, 'yyyy-MM-dd') === todayDateString
+                ? t('profile.month_graph_container.today')
+                : isAdjacentDate(data.date)
+                  ? ''
+                  : format(date, 'M.d')
 
-            if (new Date(data.date).getTime() > new Date(todayDateString).getTime()) {
+            if (date.getTime() > new Date(todayDateString).getTime()) {
               return null
             }
 

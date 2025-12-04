@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 
-import { addDays, format, isSameDay, parseISO, startOfDay } from 'date-fns'
+import { addDays, format, isSameDay, startOfDay } from 'date-fns'
 
 import { ShadcnCalendar } from '@/shared/components/ui/calendar'
 import { cn } from '@/shared/lib/utils'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 interface Props {
   selectedDate?: Date
@@ -45,6 +46,7 @@ export const Calendar = ({
   noSelectMode,
 }: Props) => {
   const today = useMemo(() => new Date(), [])
+  const { t } = useTranslation()
   // const selectedDateString = format(selectedDate, 'yyyy-MM-dd')
 
   // const router = useRouter()
@@ -91,7 +93,7 @@ export const Calendar = ({
     if (dates) {
       const solvedDates = dates
         .filter((record) => record.isDailyQuizComplete)
-        .map((record) => startOfDay(parseISO(record.date)))
+        .map((record) => startOfDay(new Date(record.date)))
 
       const ranges: { start: Date; end: Date }[] = []
       let start: Date | null = null
@@ -153,9 +155,17 @@ export const Calendar = ({
         today={today}
         mode="single"
         formatters={{
-          formatCaption: (Date: Date) => `${format(Date, 'M')}월`,
+          formatCaption: (Date: Date) => t(`common.month.${format(Date, 'M')}`),
           formatWeekdayName: (Date: Date) => {
-            const weekdays = ['일', '월', '화', '수', '목', '금', '토']
+            const weekdays = [
+              t('common.day.sunday'),
+              t('common.day.monday'),
+              t('common.day.tuesday'),
+              t('common.day.wednesday'),
+              t('common.day.thursday'),
+              t('common.day.friday'),
+              t('common.day.saturday'),
+            ]
             return weekdays[Date.getDay()]
           },
         }}

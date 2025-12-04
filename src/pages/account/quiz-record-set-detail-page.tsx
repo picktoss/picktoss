@@ -17,8 +17,10 @@ import { ButtonSolidIcon } from '@/shared/components/ui/button-solid-icon'
 import Loading from '@/shared/components/ui/loading'
 import { Tag } from '@/shared/components/ui/tag'
 import { Text } from '@/shared/components/ui/text'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const QuizRecordSetDetailPage = () => {
+  const { t } = useTranslation()
   const params = useParams()
   const dailyQuizRecordId = Number(params.quizSetId)
 
@@ -37,7 +39,11 @@ const QuizRecordSetDetailPage = () => {
     const minutes = Math.floor((totalSeconds % 3600) / 60)
     const seconds = Math.floor(totalSeconds % 60)
 
-    return [hours && `${hours}시간`, minutes && `${minutes}분`, seconds && `${seconds}초`]
+    return [
+      hours && `${hours}${t('profile.quiz_record_set_detail.time_hours')}`,
+      minutes && `${minutes}${t('profile.quiz_record_set_detail.time_minutes')}`,
+      seconds && `${seconds}${t('profile.quiz_record_set_detail.time_seconds')}`,
+    ]
       .filter((value) => value)
       .join(' ')
   }
@@ -135,19 +141,19 @@ const QuizRecordSetDetailPage = () => {
             </div>
           </div>
 
-          <div className="flex">
-            <div className="flex-center flex-col px-[30px]">
+          <div className="flex w-fit">
+            <div className="flex-center flex-col px-[9px] w-[124px] overflow-visible">
               <div className="flex-center mb-[6px] size-[40px]">
                 <ImgSpeechbubble className="size-[32px]" />
               </div>
               <Text typo="subtitle-2-bold" className="mb-[2px]">
-                {quizSetRecordData?.totalQuizCount}문제
+                {t('profile.quiz_record_set_detail.question_count', { count: quizSetRecordData?.totalQuizCount })}
               </Text>
               <Text typo="body-2-medium" color="sub">
-                문제 수
+                {t('profile.quiz_record_set_detail.question_count_text')}
               </Text>
             </div>
-            <div className="flex-center flex-col border-x border-divider px-[30px]">
+            <div className="flex-center flex-col border-x border-divider px-[9px] w-[124px] overflow-visible">
               <div className="flex-center mb-[6px] size-[40px]">
                 <ImgStopwatch className="size-[32px]" />
               </div>
@@ -155,10 +161,10 @@ const QuizRecordSetDetailPage = () => {
                 {formatDuration(quizSetRecordData?.totalElapsedTimeMs || 0)}
               </Text>
               <Text typo="body-2-medium" color="sub">
-                소요시간
+                {t('profile.quiz_record_set_detail.time_spent')}
               </Text>
             </div>
-            <div className="flex-center flex-col px-[30px]">
+            <div className="flex-center flex-col px-[9px] w-[124px] overflow-visible">
               <div className="flex-center mb-[6px] size-[40px]">
                 <ImgCheckbadge className="size-[32px]" />
               </div>
@@ -166,7 +172,7 @@ const QuizRecordSetDetailPage = () => {
                 {Math.round(quizSetRecordData?.averageCorrectAnswerRate ?? 0)}%
               </Text>
               <Text typo="body-2-medium" color="sub">
-                정답률
+                {t('profile.quiz_record_set_detail.accuracy_rate')}
               </Text>
             </div>
           </div>
@@ -181,11 +187,11 @@ const QuizRecordSetDetailPage = () => {
                   right={
                     question.isAnswer ? (
                       <Tag size="md" color="green">
-                        정답
+                        {t('common.correct')}
                       </Tag>
                     ) : (
                       <Tag size="md" color="red">
-                        오답
+                        {t('common.incorrect')}
                       </Tag>
                     )
                   }

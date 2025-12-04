@@ -10,6 +10,7 @@ import { Tag } from '@/shared/components/ui/tag'
 import { Text } from '@/shared/components/ui/text'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 export const QuizResultView = ({
   totalElapsedTime,
@@ -19,6 +20,7 @@ export const QuizResultView = ({
   quizWithResultData: QuizResultCardData[]
 }) => {
   const { trackEvent } = useAmplitude()
+  const { t } = useTranslation()
   useEffect(() => {
     trackEvent('quiz_complete_view')
   }, [])
@@ -34,6 +36,22 @@ export const QuizResultView = ({
   const correctAnswers = quizWithResultData.filter((quiz: QuizResultCardData) => quiz.isCorrect).length
   const correctAnswerRate = totalQuizCount > 0 ? Math.round((correctAnswers / totalQuizCount) * 100) : 0
 
+  // 소요 시간 처리
+  const formatDuration = (ms: number): string => {
+    const totalSeconds = Math.floor(ms / 1000)
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = Math.floor(totalSeconds % 60)
+
+    return [
+      hours && `${hours}${t('profile.quiz_record_set_detail.time_hours')}`,
+      minutes && `${minutes}${t('profile.quiz_record_set_detail.time_minutes')}`,
+      seconds && `${seconds}${t('profile.quiz_record_set_detail.time_seconds')}`,
+    ]
+      .filter((value) => value)
+      .join(' ')
+  }
+
   return (
     <div className="min-h-screen bg-surface-2">
       <div className="px-4 pb-[162px]">
@@ -41,7 +59,7 @@ export const QuizResultView = ({
           <div>
             <ImgMedal className="w-[160px] mx-auto pt-[70px]" />
             <Text typo="h2" color="primary" className="text-center">
-              퀴즈 완료!
+              {t('progressQuiz.quiz_result_view.complete_title')}
             </Text>
           </div>
           <div className="text-center mt-2">
@@ -53,20 +71,20 @@ export const QuizResultView = ({
             <div className="px-[20px] flex flex-col items-center">
               <ImgSpeechbubble className="w-[32px]" />
               <Text typo="subtitle-2-bold" className="mt-1">
-                {totalQuizCount}문제
+                {t('progressQuiz.quiz_result_view.question_count', { count: totalQuizCount })}
               </Text>
               <Text typo="body-2-medium" color="sub" className="mt-0.5">
-                문제 수
+                {t('progressQuiz.quiz_result_view.question')}
               </Text>
             </div>
             <div className="h-[80px] w-px bg-[#E3E9EF]" />
             <div className="px-[20px] flex flex-col items-center">
               <ImgStopwatch className="w-[32px]" />
               <Text typo="subtitle-2-bold" className="mt-1">
-                {Math.ceil(totalElapsedTime / 1000 / 60)}분
+                {formatDuration(totalElapsedTime || 0)}
               </Text>
               <Text typo="body-2-medium" color="sub" className="mt-0.5">
-                소요시간
+                {t('progressQuiz.quiz_result_view.time_spent')}
               </Text>
             </div>
             <div className="h-[80px] w-px bg-[#E3E9EF]" />
@@ -76,7 +94,7 @@ export const QuizResultView = ({
                 {correctAnswerRate}%
               </Text>
               <Text typo="body-2-medium" color="sub" className="mt-0.5">
-                정답률
+                {t('progressQuiz.quiz_result_view.accuracy_rate')}
               </Text>
             </div>
           </div>
@@ -114,7 +132,7 @@ export const QuizResultView = ({
                   order={index + 1}
                   right={
                     <Tag size="md" color={quizWithResult.isCorrect ? 'green' : 'red'}>
-                      {quizWithResult.isCorrect ? '정답' : '오답'}
+                      {quizWithResult.isCorrect ? t('common.correct') : t('common.incorrect')}
                     </Tag>
                   }
                 />
@@ -145,7 +163,10 @@ export const QuizResultView = ({
       </div>
 
       <FixedBottom className="bg-surface-2 h-[114px]">
-        <Button onClick={() => (prevUrl ? router.replace(prevUrl as any, {}) : router.back())}>확인</Button>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <Button onClick={() => (prevUrl ? router.replace(prevUrl as any, {}) : router.back())}>
+          {t('common.confirm')}
+        </Button>
       </FixedBottom>
     </div>
   )

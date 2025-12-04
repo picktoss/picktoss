@@ -16,24 +16,27 @@ import { Header } from '@/shared/components/header'
 import QuestionBox from '@/shared/components/items/question-box-item'
 import Loading from '@/shared/components/ui/loading'
 import { Text } from '@/shared/components/ui/text'
+import { TERMS_URL } from '@/shared/constants/terms-url-with-locale'
 import { useRouter } from '@/shared/lib/router'
 import { setLocalStorageItem } from '@/shared/lib/storage/lib'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 const exampleQuestions = [
-  { emoji: '🪶', question: '숏 전략은 매수하는 전략이다' },
-  { emoji: '👠', question: '프로세스는 무엇인가요?' },
-  { emoji: '💡', question: '롤스는 무엇을 주장했나요?' },
-  { emoji: '🚩', question: '미토콘드리아에 대한 설명 중 틀린 것은?' },
-  { emoji: '🧠', question: '참여가 늘어나는 이유는 무엇인가요?' },
+  { emoji: '🪶', question: 'etc.login_page.short_strategy_question' },
+  { emoji: '👠', question: 'etc.login_page.process_question' },
+  { emoji: '💡', question: 'etc.login_page.rawls_question' },
+  { emoji: '🚩', question: 'etc.login_page.mitochondria_question' },
+  { emoji: '🧠', question: 'etc.login_page.participation_question' },
 ]
 
 const InviteLoginPage = () => {
   const router = useRouter()
+  const { t, currentLanguage } = useTranslation()
 
   const [searchParams] = useSearchParams()
   const inviteCode = searchParams.get('inviteCode') ?? ''
 
-  const [verifyCode, setVerifyCode] = useState(false)
+  const [verifyCode, setVerifyCode] = useState<boolean | null>(null)
   const { mutate: verifyInviteCode, isPending } = useVerifyInviteCode()
 
   const onLoginSuccess = () => {
@@ -74,14 +77,18 @@ const InviteLoginPage = () => {
     )
   }, [inviteCode])
 
+  useEffect(() => {
+    if (verifyCode === null) return
+
+    if (!verifyCode) {
+      router.replace('/invite/:inviteCode', {
+        params: [inviteCode ?? ''],
+      })
+    }
+  }, [verifyCode])
+
   if (isPending) {
     return <Loading center />
-  }
-
-  if (!verifyCode) {
-    router.replace('/invite/:inviteCode', {
-      params: [inviteCode ?? ''],
-    })
   }
 
   return (
@@ -101,13 +108,13 @@ const InviteLoginPage = () => {
                 <ImgSymbol className="w-[80px]" />
                 <IcLogo className="w-[210px] h-[53.48px] text-icon-inverse" />
               </div>
-              <div className="flex flex-col gap-[10px]">
+              <div className="w-full max-w-xl flex flex-col gap-[10px]">
                 <Marquee gradient={false} speed={20} direction="left">
                   {exampleQuestions.map((item, index) => (
                     <QuestionBox
                       key={index}
                       emoji={item.emoji}
-                      question={item.question}
+                      question={t(item.question)}
                       color="dark"
                       className="mr-[8px]"
                     />
@@ -118,7 +125,7 @@ const InviteLoginPage = () => {
                     <QuestionBox
                       key={index}
                       emoji={item.emoji}
-                      question={item.question}
+                      question={t(item.question)}
                       color="dark"
                       className="mr-[8px]"
                     />
@@ -129,31 +136,31 @@ const InviteLoginPage = () => {
 
             <div className="w-full flex-center flex-col gap-[16px]">
               <div className="w-full flex flex-col gap-2 px-[32px]">
-                <KakaoLoginButton onClick={() => handleLogin('KAKAO')} />
+                {currentLanguage === 'ko-KR' && <KakaoLoginButton onClick={() => handleLogin('KAKAO')} />}
                 <GoogleLoginButton onClick={() => handleLogin('GOOGLE')} />
               </div>
 
               <div className="text-center">
                 <Text typo="caption-medium" color="caption">
-                  로그인 시{' '}
+                  {t('etc.login_page.login_message')}{' '}
                   <ReactRouterLink
-                    to="https://picktoss.notion.site/1209d818f56080fbb469e82def758e9c?pvs=4"
+                    to={TERMS_URL.PRIVACY_POLICY[currentLanguage]}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline"
                   >
-                    개인정보보호 정책
+                    {t('etc.login_page.privacy_policy')}
                   </ReactRouterLink>{' '}
-                  및{' '}
+                  {t('etc.login_page.and')}{' '}
                   <ReactRouterLink
-                    to="https://picktoss.notion.site/1209d818f560809aad11c5b64020d735?pvs=4"
+                    to={TERMS_URL.TERMS_OF_SERVICE[currentLanguage]}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline"
                   >
-                    서비스 이용약관
+                    {t('etc.login_page.terms_of_service')}
                   </ReactRouterLink>
-                  에 동의하는 것으로 <br /> 간주하며, 서비스 이용을 위해 이메일과 이름을 수집합니다.
+                  {t('etc.login_page.agreement_message')} <br /> {t('etc.login_page.agreement_description')}
                 </Text>
               </div>
             </div>
@@ -165,17 +172,19 @@ const InviteLoginPage = () => {
 }
 
 const LoadingSpinner = () => {
+  const { t } = useTranslation()
   return (
     <div className="size-full flex-center flex-col">
       <div className="w-12 h-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin"></div>
       <Text typo="body-1-medium" color="sub" className="mt-4">
-        로그인 중...
+        {t('etc.login_page.logging_in_message')}
       </Text>
     </div>
   )
 }
 
 const GoogleLoginButton = ({ ...props }) => {
+  const { t } = useTranslation()
   return (
     <button
       className="h-[48px] relative rounded-full border flex-center bg-white border-gray-100 active:bg-gray-50"
@@ -183,18 +192,19 @@ const GoogleLoginButton = ({ ...props }) => {
     >
       <ImgRoundGoogle className="absolute size-[36px] left-2 bottom-1/2 translate-y-1/2" />
       <Text typo="button-3" color="gray-800">
-        Google로 시작하기
+        {t('etc.login_page.google_start_button')}
       </Text>
     </button>
   )
 }
 
 const KakaoLoginButton = ({ ...props }) => {
+  const { t } = useTranslation()
   return (
     <button className="h-[48px] relative rounded-full flex-center bg-[#FFE45F] active:opacity-90" {...props}>
       <ImgRoundKakao className="absolute size-[36px] left-2 bottom-1/2 translate-y-1/2" />
       <Text typo="button-3" color="gray-800">
-        카카오로 시작하기
+        {t('etc.login_page.kakao_start_button')}
       </Text>
     </button>
   )

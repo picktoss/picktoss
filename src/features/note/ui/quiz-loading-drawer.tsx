@@ -17,12 +17,14 @@ import { TextButton } from '@/shared/components/ui/text-button'
 import { useOnceEffect } from '@/shared/hooks'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
+import { useTranslation } from '@/shared/locales/use-translation'
 
 // 예상 로딩 시간 (ms) - 이 값에 따라 프로그레스바 속도가 조절됨
 const ESTIMATED_LOADING_TIME = 40000 // 40초
 
 export const QuizLoadingDrawer = () => {
   const { trackEvent } = useAmplitude()
+  const { t } = useTranslation()
   const router = useRouter()
 
   // 로딩 상태를 queryParam으로 관리
@@ -81,7 +83,7 @@ export const QuizLoadingDrawer = () => {
       completeAnimation()
       setTimeout(() => {
         setComplete(true)
-        toast.success('문서가 생성되었습니다.')
+        toast.success(`${t('createQuiz.toast.document_created')}.`)
       }, 500)
     }
   }, [quizSetId])
@@ -100,23 +102,23 @@ export const QuizLoadingDrawer = () => {
           <div className="flex-center flex-col">
             <ImgQuizEmpty className="w-[120px]" />
             <Text typo="subtitle-1-bold" color="primary" className="mt-4">
-              퀴즈를 만드는 중 문제가 생겼어요
+              {t('createQuiz.quiz_loading_drawer.error_title')}
             </Text>
             <Text typo="body-1-medium" color="sub" className="mt-1">
-              아래 내용을 확인하신 후 다시 시도해보세요
+              {t('createQuiz.quiz_loading_drawer.error_description')}
             </Text>
           </div>
 
           <div className="my-8 py-6 px-5 bg-surface-2 rounded-[12px]">
             <Text typo="body-1-bold" color="secondary">
-              좋은 퀴즈를 위한 노트 Tip
+              {t('createQuiz.quiz_loading_drawer.tip_title')}
             </Text>
             <ul className="mt-2.5 list-disc pl-5">
               <Text as="li" typo="body-1-medium" color="sub">
-                충분한 정보가 있는지 확인해주세요
+                {t('createQuiz.quiz_loading_drawer.tip_check_info')}
               </Text>
               <Text as="li" typo="body-1-medium" color="sub">
-                같은 내용이 반복되지 않도록 해주세요
+                {t('createQuiz.quiz_loading_drawer.tip_avoid_repeat')}
               </Text>
             </ul>
           </div>
@@ -128,7 +130,7 @@ export const QuizLoadingDrawer = () => {
               resetProgressAnimation()
             }}
           >
-            노트 수정하러 가기
+            {t('createQuiz.quiz_loading_drawer.edit_note_button')}
           </Button>
         </div>
       )
@@ -140,10 +142,10 @@ export const QuizLoadingDrawer = () => {
           <div className="flex-center flex-col">
             <ImgQuizcard className="w-[120px]" />
             <Text typo="h4" color="primary" className="mt-4">
-              퀴즈 생성 완료!
+              {t('createQuiz.quiz_loading_drawer.complete_title')}!
             </Text>
             <Text typo="subtitle-2-medium" color="sub" className="mt-2">
-              새로 생긴 문제를 지금 확인해보세요
+              {t('createQuiz.quiz_loading_drawer.complete_description')}
             </Text>
           </div>
 
@@ -155,12 +157,12 @@ export const QuizLoadingDrawer = () => {
                   params: [String(quizSetId)],
                   search: {
                     documentId,
-                    prevUrl: `/library/${documentId}`,
+                    prevUrl: `/quiz-detail/${documentId}`,
                   },
                 })
               }}
             >
-              시작하기
+              {t('createQuiz.quiz_loading_drawer.start_button')}
             </Button>
             <TextButton
               onClick={() => {
@@ -170,7 +172,7 @@ export const QuizLoadingDrawer = () => {
               size="lg"
               className="text-secondary mt-[24px]"
             >
-              다음에
+              {t('createQuiz.quiz_loading_drawer.later_button')}
             </TextButton>
           </div>
         </div>
@@ -186,10 +188,10 @@ export const QuizLoadingDrawer = () => {
             progressOverride={progress}
             text={
               progress < 20
-                ? '내용을 읽고 있어요'
+                ? t('createQuiz.quiz_loading_drawer.progress_reading')
                 : progress < 60
-                  ? '퀴즈로 만들 내용을 고르고 있어요'
-                  : '질문을 만들고 있어요'
+                  ? t('createQuiz.quiz_loading_drawer.progress_selecting')
+                  : t('createQuiz.quiz_loading_drawer.progress_creating')
             }
           />
         </div>
