@@ -366,6 +366,7 @@
       "ox_label": "O/X",
       "question_label": "Question",
       "question_required_error": "Please enter a question",
+      "quiz_count": "{{count}} questions",
       "quiz_label": "Question",
       "registered_date": "Register",
       "review_pick_description": "Check the questions I got wrong",
@@ -547,13 +548,13 @@
       "special_reward_message2": "Arrived",
       "star_count": "{{count}} stars",
       "star_unit": "",
-      "title": "Additional Star Payment",
+      "title": "Additional Star",
       "welcome": "Welcome,"
     },
     "inviter_reward_dialog": {
       "invite_reward_message1": "To",
       "invite_reward_message2": "",
-      "invite_reward_message3": "will be given as a reward",
+      "invite_reward_message3": "is given as a reward",
       "receive_button": "Receive",
       "title": "Invitation Reward"
     },
