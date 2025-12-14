@@ -5,6 +5,14 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import svgr from 'vite-plugin-svgr'
 
+// 빌드 시 html 내의 주석을 제거하는 커스텀 플러그인
+const stripHtmlComments = {
+  name: 'strip-html-comments',
+  transformIndexHtml(html: string) {
+    return html.replace(/<!--[\s\S]*?-->/g, '')
+  },
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -58,6 +66,7 @@ export default defineConfig({
       },
     }),
     svgr(),
+    stripHtmlComments,
   ],
   server: {
     allowedHosts: ['a0d0-222-238-36-157.ngrok-free.app', 'd7ac-220-85-58-253.ngrok-free.app'],
