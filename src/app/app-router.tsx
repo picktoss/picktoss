@@ -44,7 +44,14 @@ import NetworkErrorFallback from '@/app/network-error'
 import NotFound from '@/app/not-found'
 
 import { RoutePath } from '@/shared/lib/router'
-import { SUPPORTED_LANGUAGE, i18n } from '@/shared/locales/i18n'
+import { SUPPORTED_LANGUAGE, SUPPORTED_LANGUAGE_VALUE, i18n } from '@/shared/locales/i18n'
+
+const detectPreferredLanguage = (): SUPPORTED_LANGUAGE_VALUE => {
+  if (typeof navigator === 'undefined') return SUPPORTED_LANGUAGE.EN
+  const browserLanguage = navigator.language || navigator.languages?.[0] || SUPPORTED_LANGUAGE.EN
+  if (browserLanguage.toLowerCase().startsWith('ko')) return SUPPORTED_LANGUAGE.KO
+  return SUPPORTED_LANGUAGE.EN
+}
 
 const detectLocaleBase = (): string | undefined => {
   if (typeof window === 'undefined') {
@@ -86,7 +93,8 @@ const LocaleRedirect = ({ basename }: { basename?: string }) => {
     const currentPath = window.location.pathname
     // 루트 진입 시에는 /explore로 유도
     const normalizedPath = currentPath === '/' ? '/explore' : currentPath
-    const target = `/en${normalizedPath}${location.search}${location.hash}`
+    const targetLang = detectPreferredLanguage()
+    const target = `/${targetLang}${normalizedPath}${location.search}${location.hash}`
 
     // 히스토리를 깔끔하게 유지하고, 베이스를 제대로 인식시키기 위해 전체 리로드
     window.location.replace(target)
