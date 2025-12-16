@@ -12,6 +12,14 @@
       "destination": "https://app.picktoss.com/quiz-detail/:id"
     },
     {
+      "source": "/ko/:path*",
+      "destination": "/ko/index.html"
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/en/index.html"
+    },
+    {
       "source": "/:path((?!api/|ads\\.txt).*)",
       "destination": "/index.html"
     }

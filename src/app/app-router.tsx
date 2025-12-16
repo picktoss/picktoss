@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from 'react-router'
+import React from 'react'
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router'
 
 import {
   AccountInfoPage,
@@ -43,10 +44,64 @@ import NetworkErrorFallback from '@/app/network-error'
 import NotFound from '@/app/not-found'
 
 import { RoutePath } from '@/shared/lib/router'
+import { SUPPORTED_LANGUAGE, i18n } from '@/shared/locales/i18n'
+
+const detectLocaleBase = (): string | undefined => {
+  if (typeof window === 'undefined') {
+    return undefined
+  }
+  const [, maybeLocale] = window.location.pathname.split('/')
+  if (maybeLocale === 'ko' || maybeLocale === 'en') {
+    return `/${maybeLocale}`
+  }
+  return undefined
+}
+
+const LocaleSync = () => {
+  const location = useLocation()
+  const [, firstSegment] = location.pathname.toLowerCase().split('/')
+  const targetLocale =
+    firstSegment === 'ko' ? SUPPORTED_LANGUAGE.KO : firstSegment === 'en' ? SUPPORTED_LANGUAGE.EN : undefined
+
+  React.useEffect(() => {
+    if (targetLocale && i18n.language !== targetLocale) {
+      i18n.changeLanguage(targetLocale)
+    }
+  }, [targetLocale])
+
+  return null
+}
+
+const LocaleRedirect = ({ basename }: { basename?: string }) => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [, firstSegment] = location.pathname.split('/')
+
+  React.useEffect(() => {
+    // 이미 베이스가 지정되어 있으면(= URL에 언어 접두사가 포함됨) 아무 것도 하지 않음
+    if (basename) return
+
+    if (firstSegment === 'ko' || firstSegment === 'en') return
+
+    const currentPath = window.location.pathname
+    // 루트 진입 시에는 /explore로 유도
+    const normalizedPath = currentPath === '/' ? '/explore' : currentPath
+    const target = `/en${normalizedPath}${location.search}${location.hash}`
+
+    // 히스토리를 깔끔하게 유지하고, 베이스를 제대로 인식시키기 위해 전체 리로드
+    window.location.replace(target)
+  }, [basename, firstSegment, location.hash, location.pathname, location.search, navigate])
+
+  return null
+}
 
 export const AppRouter = () => {
+  const basename = detectLocaleBase()
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
+      <LocaleRedirect basename={basename} />
+      <LocaleSync />
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<RewardLayout />}>

@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { Toaster } from '@/shared/components/ui/sonner'
 import { AmplitudeProvider } from '@/shared/hooks/use-amplitude-context'
-import { i18n, initializeI18next } from '@/shared/locales/i18n'
+import { SUPPORTED_LANGUAGE, i18n, initializeI18next } from '@/shared/locales/i18n'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +24,11 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   // i18next 초기화
   React.useEffect(() => {
     if (!isI18nInitialized) {
-      initializeI18next()
+      const [, firstSegment] = window.location.pathname.toLowerCase().split('/')
+      const urlLocale =
+        firstSegment === 'ko' ? SUPPORTED_LANGUAGE.KO : firstSegment === 'en' ? SUPPORTED_LANGUAGE.EN : undefined
+
+      initializeI18next(urlLocale)
       setIsI18nInitialized(true)
     }
   }, [isI18nInitialized])

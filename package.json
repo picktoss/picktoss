@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/generate-lang-html.mjs",
     "lint": "eslint .",
     "prettier": "prettier --write .",
     "preview": "vite preview",
