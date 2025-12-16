@@ -55,7 +55,7 @@ export const useSideAppDownloadPopup = () => {
 
           {/* <ImgPush className="w-[232px] h-[154.67px]" /> */}
 
-          {currentLanguage === 'ko-KR' ? (
+          {currentLanguage === 'ko' ? (
             <ImgPush height={154.67} width={232} />
           ) : (
             <ImgPushEng height={154.67} width={232} />

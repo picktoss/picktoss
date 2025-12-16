@@ -21,8 +21,13 @@ export type SUPPORTED_LOCALE_VALUE = (typeof SUPPORTED_LOCALE)[SUPPORTED_LOCALE_
 
 // 지원하는 언어와 해당 리소스 매핑
 const resources = {
-  'ko-KR': { translation: ko_KR },
-  'en-US': { translation: en_US },
+  ko: { translation: ko_KR },
+  en: { translation: en_US },
+}
+
+const PATH_LANGUAGE_MAP: Record<string, SUPPORTED_LANGUAGE_VALUE> = {
+  ko: SUPPORTED_LANGUAGE.KO,
+  en: SUPPORTED_LANGUAGE.EN,
 }
 
 // const LANGUAGE_COOKIE_NAME = 'lang'
@@ -46,29 +51,44 @@ i18next.use({
 })
 
 // 시스템 언어 감지 함수
-const detectSystemLanguage = (): SUPPORTED_LOCALE_VALUE => {
+const detectSystemLanguage = (): SUPPORTED_LANGUAGE_VALUE => {
   // 브라우저 언어 설정 확인
-  const browserLanguage = navigator.language || navigator.languages?.[0] || SUPPORTED_LOCALE.EN
+  const browserLanguage = navigator.language || navigator.languages?.[0] || SUPPORTED_LANGUAGE.EN
 
   // 한국어 관련 언어 코드인지 확인
   if (browserLanguage.startsWith(SUPPORTED_LANGUAGE.KO) || browserLanguage.startsWith(SUPPORTED_LOCALE.KO)) {
-    return SUPPORTED_LOCALE.KO
+    return SUPPORTED_LANGUAGE.KO
   }
 
   // 기본값은 영어
-  return SUPPORTED_LOCALE.EN
+  return SUPPORTED_LANGUAGE.EN
 }
 
-export const initializeI18next = (lng?: string): void => {
-  // 언어가 지정되지 않았으면 시스템 언어 감지
-  const defaultLanguage = lng || detectSystemLanguage()
+const detectUrlLanguage = (): SUPPORTED_LANGUAGE_VALUE | null => {
+  if (typeof window === 'undefined') {
+    return null
+  }
+  const [, firstSegment] = window.location.pathname.toLowerCase().split('/')
+  if (firstSegment && PATH_LANGUAGE_MAP[firstSegment]) {
+    return PATH_LANGUAGE_MAP[firstSegment]
+  }
+  return null
+}
+
+export const initializeI18next = (lng?: SUPPORTED_LANGUAGE_VALUE): void => {
+  // 언어가 지정되지 않았으면 URL > 시스템 순서로 감지
+  const defaultLanguage = lng || detectUrlLanguage() || detectSystemLanguage()
   i18next
     .use(initReactI18next) // React i18next 초기화
     .init({
       resources, // 리소스 객체를 직접 전달
       lng: defaultLanguage, // 기본 언어 설정
-      fallbackLng: false, // 기본 언어로 대체되지 않게 설정
-      debug: true, // 디버그 모드 활성화
+      fallbackLng: SUPPORTED_LANGUAGE.EN,
+      supportedLngs: Object.values(SUPPORTED_LANGUAGE),
+      cleanCode: true,
+      nonExplicitSupportedLngs: true,
+      load: 'languageOnly',
+      debug: false,
       nsSeparator: false, // 네임스페이스 분리자 비활성화
       returnEmptyString: false, // 빈 문자열 반환하지 않음
       postProcess: ['removeEmptyVars'],

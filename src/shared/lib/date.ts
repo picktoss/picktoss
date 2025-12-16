@@ -7,7 +7,7 @@ import {
   isValid,
 } from 'date-fns'
 
-import { SUPPORTED_LOCALE, SUPPORTED_LOCALE_VALUE, i18n } from '@/shared/locales/i18n'
+import { SUPPORTED_LANGUAGE, SUPPORTED_LANGUAGE_VALUE, i18n } from '@/shared/locales/i18n'
 
 export const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
 
@@ -54,7 +54,7 @@ export const getRelativeTime = (time: string) => {
   if (!isValid(parsed)) throw new Error('Invalid date string')
 
   const now = new Date()
-  const lang = (i18n.language as SUPPORTED_LOCALE_VALUE) ?? SUPPORTED_LOCALE.EN
+  const lang = (i18n.language as SUPPORTED_LANGUAGE_VALUE) ?? SUPPORTED_LANGUAGE.EN
   const formatter = getFormatter(lang)
   const minutes = differenceInMinutes(now, parsed)
 
@@ -63,7 +63,7 @@ export const getRelativeTime = (time: string) => {
   if (days === 1) return i18n.t('common.relative_time.oneDayAgo')
   if (days === 2) return i18n.t('common.relative_time.twoDaysAgo')
   if (days >= 4) {
-    return format(parsed, lang === SUPPORTED_LOCALE.KO ? 'M월 d일' : 'MMM d')
+    return format(parsed, lang === SUPPORTED_LANGUAGE.KO ? 'M월 d일' : 'MMM d')
   }
 
   if (minutes < 60) return formatter.format(-minutes, 'minute')

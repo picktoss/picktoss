@@ -169,7 +169,7 @@ const InviteDrawer = ({ triggerComponent, open, onOpenChange }: Props) => {
             </div>
 
             <div className="w-full flex flex-col gap-[8px]">
-              {currentLanguage === 'ko-KR' && (
+              {currentLanguage === 'ko' && (
                 <Button
                   onClick={async () => await handleKakaoShare()}
                   variant={'secondary1'}

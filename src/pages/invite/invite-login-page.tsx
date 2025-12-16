@@ -136,7 +136,7 @@ const InviteLoginPage = () => {
 
             <div className="w-full flex-center flex-col gap-[16px]">
               <div className="w-full flex flex-col gap-2 px-[32px]">
-                {currentLanguage === 'ko-KR' && <KakaoLoginButton onClick={() => handleLogin('KAKAO')} />}
+                {currentLanguage === 'ko' && <KakaoLoginButton onClick={() => handleLogin('KAKAO')} />}
                 <GoogleLoginButton onClick={() => handleLogin('GOOGLE')} />
               </div>
 

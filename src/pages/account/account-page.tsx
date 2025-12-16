@@ -404,7 +404,7 @@ const NotificationDrawer = ({
           </Text>
         </DrawerHeader>
 
-        {currentLanguage === 'ko-KR' ? (
+        {currentLanguage === 'ko' ? (
           <ImgPush height={200} width={301.25} />
         ) : (
           <ImgPushEng height={200} width={301.25} />
