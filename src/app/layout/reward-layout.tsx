@@ -29,6 +29,12 @@ export const RewardLayout = () => {
   const { data: hasInviteeData } = useCheckInviteCodeBySignUp({ enabled: !!token })
 
   useEffect(() => {
+    if (!token) {
+      setInviteCode('')
+      setCheckRewardDialog(false)
+      setIsInitialized(false)
+    }
+
     if (token) {
       const storageInviteCode = getLocalStorageItem('inviteCode')
       const storageCheckReward = getLocalStorageItem('checkRewardDialog')
@@ -39,6 +45,13 @@ export const RewardLayout = () => {
   }, [token])
 
   useEffect(() => {
+    // 토큰이 없으면 다이얼로그가 열리지 않도록 즉시 닫고 종료
+    if (!token) {
+      setOpenRewardForInvitee(false)
+      setOpenRewardForInviter(false)
+      return
+    }
+
     // 초기화가 완료되지 않았다면 실행하지 않음
     if (!isInitialized) {
       return
@@ -49,10 +62,11 @@ export const RewardLayout = () => {
 
       setOpenRewardForInvitee(true)
     } else {
+      setOpenRewardForInvitee(false)
       removeLocalStorageItem('inviteCode')
       removeLocalStorageItem('checkRewardDialog')
     }
-  }, [inviteCode, isSignUp, checkRewardDialog, isInitialized])
+  }, [inviteCode, isSignUp, checkRewardDialog, isInitialized, token])
 
   useEffect(() => {
     if (hasInviteeData?.type === 'READY') {
