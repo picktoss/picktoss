@@ -31,7 +31,7 @@ export const InstallGuidePage = () => {
 }
 
 const AppInstallIos = () => {
-  const { t } = useTranslation()
+  const { t, currentLanguage } = useTranslation()
 
   return (
     <main className="flex h-dvh flex-col items-center overflow-y-auto bg-base-02 px-[16px] pb-[112px] pt-[52px]">
@@ -42,11 +42,11 @@ const AppInstallIos = () => {
       </Text>
 
       <div className="mt-[49px] flex flex-col gap-4 *:w-full *:max-w-[380px]">
-        <img src="/images/ios-guide-1.png" alt="" />
+        <img src={currentLanguage === 'ko' ? '/images/ios-guide-1.png' : '/images/ios-guide-en-1.png'} alt="" />
 
-        <img src="/images/ios-guide-2.png" alt="" />
+        <img src={currentLanguage === 'ko' ? '/images/ios-guide-2.png' : '/images/ios-guide-en-2.png'} alt="" />
 
-        <img src="/images/ios-guide-3.png" alt="" />
+        <img src={currentLanguage === 'ko' ? '/images/ios-guide-3.png' : '/images/ios-guide-en-3.png'} alt="" />
       </div>
     </main>
   )
@@ -58,7 +58,7 @@ interface AppInstallAosProps {
 
 const AppInstallAos = ({ handleInstallClick }: AppInstallAosProps) => {
   const [showInstallGuide, setShowInstallGuide] = useState(false)
-  const { t } = useTranslation()
+  const { t, currentLanguage } = useTranslation()
 
   if (showInstallGuide) {
     return (
@@ -70,11 +70,11 @@ const AppInstallAos = ({ handleInstallClick }: AppInstallAosProps) => {
         </Text>
 
         <div className="mt-[49px] flex flex-col gap-4 *:w-full *:max-w-[380px]">
-          <img src="/images/ios-guide-1.png" alt="" />
+          <img src={currentLanguage === 'ko' ? '/images/ios-guide-1.png' : '/images/ios-guide-en-1.png'} alt="" />
 
-          <img src="/images/ios-guide-2.png" alt="" />
+          <img src={currentLanguage === 'ko' ? '/images/ios-guide-2.png' : '/images/ios-guide-en-2.png'} alt="" />
 
-          <img src="/images/ios-guide-3.png" alt="" />
+          <img src={currentLanguage === 'ko' ? '/images/ios-guide-3.png' : '/images/ios-guide-en-3.png'} alt="" />
         </div>
       </main>
     )
