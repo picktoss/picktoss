@@ -39,7 +39,7 @@ export const RootLayout = () => {
   const accessMobileWeb = !checkPWA() && isMobile
 
   return (
-    <div className={cn('mx-auto h-screen max-w-xl bg-gray-50 overscroll-none', accessMobileWeb && 'h-dvh')}>
+    <div className={cn('relative mx-auto h-screen max-w-xl bg-gray-50 overscroll-none', accessMobileWeb && 'h-dvh')}>
       <ErrorBoundary
         fallbackRender={(e) => {
           console.error(e)
