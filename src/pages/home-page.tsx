@@ -438,48 +438,49 @@ const HomePage = () => {
               </Text>
             </div>
           )}
+
+          <div>
+            <button
+              className="absolute bg-base-3 rounded-full bottom-[calc(var(--spacing-tab-navigation)+12px)] h-[48px] w-[calc(100%-32px)]"
+              onClick={() => {
+                router.push('/note/create', {
+                  search: {
+                    documentType: 'TEXT',
+                  },
+                })
+                trackEvent('generate_new_click', {
+                  format: '텍스트 버튼',
+                  location: '데일리 페이지',
+                })
+              }}
+            >
+              <Text typo="subtitle-2-medium" color="sub" className="center">
+                {t('daily.home_page.create_quiz_button')}
+              </Text>
+              <div
+                role="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  router.push('/note/create', {
+                    search: {
+                      documentType: 'FILE',
+                    },
+                  })
+                  trackEvent('generate_new_click', {
+                    format: '파일 버튼',
+                    location: '데일리 페이지',
+                  })
+                }}
+                className="flex-center bg-orange-500 rounded-full size-10 absolute right-1 bottom-1/2 translate-y-1/2"
+              >
+                <IcFile className="size-5 text-white" />
+              </div>
+            </button>
+          </div>
         </HeaderOffsetLayout>
       )}
       {/* 알림 권한 허용 drawer */}
       <NotificationDrawer open={openNotification} onOpenChange={setOpenNotification} />
-      <div className="px-4">
-        <button
-          className="absolute bg-base-3 rounded-full bottom-[calc(var(--spacing-tab-navigation)+12px)] h-[48px] w-[calc(100%-32px)]"
-          onClick={() => {
-            router.push('/note/create', {
-              search: {
-                documentType: 'TEXT',
-              },
-            })
-            trackEvent('generate_new_click', {
-              format: '텍스트 버튼',
-              location: '데일리 페이지',
-            })
-          }}
-        >
-          <Text typo="subtitle-2-medium" color="sub" className="center">
-            {t('daily.home_page.create_quiz_button')}
-          </Text>
-          <div
-            role="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              router.push('/note/create', {
-                search: {
-                  documentType: 'FILE',
-                },
-              })
-              trackEvent('generate_new_click', {
-                format: '파일 버튼',
-                location: '데일리 페이지',
-              })
-            }}
-            className="flex-center bg-orange-500 rounded-full size-10 absolute right-1 bottom-1/2 translate-y-1/2"
-          >
-            <IcFile className="size-5 text-white" />
-          </div>
-        </button>
-      </div>
       <AlertDrawer
         open={rewardDrawerOpen}
         onOpenChange={setRewardDrawerOpen}
