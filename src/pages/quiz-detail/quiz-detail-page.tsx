@@ -59,11 +59,12 @@ import { StorageKey, useLocalStorage, useSessionStorage } from '@/shared/lib/sto
 import { useTranslation } from '@/shared/locales/use-translation'
 
 const QuizDetailPage = () => {
+  const { t, currentLanguage } = useTranslation()
+
   const { trackEvent } = useAmplitude()
   const router = useRouter()
 
   const [_, setRedirectUrl] = useLocalStorage(StorageKey.redirectUrl, '')
-  const { t } = useTranslation()
 
   const { noteId } = useParams()
 
@@ -182,7 +183,7 @@ const QuizDetailPage = () => {
       try {
         await navigator.share({
           title: document.name,
-          url: `${window.location.origin}/quiz-detail/${noteId}`,
+          url: `${window.location.origin}/${currentLanguage}/quiz-detail/${noteId}`,
         })
         console.log('공유 성공')
       } catch (error) {
