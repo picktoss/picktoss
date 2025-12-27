@@ -9,7 +9,7 @@
           "value": "(?i).*(bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|kakaotalk-scrap).*"
         }
       ],
-      "destination": "https://app.picktoss.com/quiz-detail/:id"
+      "destination": "https://picktoss-explore-detail.vercel.app/quiz-detail/:id"
     },
     {
       "source": "/ko/:path*",
