@@ -20,7 +20,7 @@
           "value": "(?i).*(bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|kakaotalk-scrap).*"
         }
       ],
-      "destination": "https://app.picktoss.com/ko/quiz-detail/:id"
+      "destination": "https://picktoss-explore-detail.vercel.app/ko/quiz-detail/:id"
     },
     {
       "source": "/en/quiz-detail/:id",
@@ -31,7 +31,7 @@
           "value": "(?i).*(bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|kakaotalk-scrap).*"
         }
       ],
-      "destination": "https://app.picktoss.com/en/quiz-detail/:id"
+      "destination": "https://picktoss-explore-detail.vercel.app/en/quiz-detail/:id"
     },
     {
       "source": "/ko/:path*",
