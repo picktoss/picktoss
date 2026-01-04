@@ -12,6 +12,28 @@
       "destination": "https://picktoss-explore-detail.vercel.app/quiz-detail/:id"
     },
     {
+      "source": "/ko/quiz-detail/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|kakaotalk-scrap).*"
+        }
+      ],
+      "destination": "https://app.picktoss.com/ko/quiz-detail/:id"
+    },
+    {
+      "source": "/en/quiz-detail/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(bot|crawler|spider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|kakaotalk-scrap).*"
+        }
+      ],
+      "destination": "https://app.picktoss.com/en/quiz-detail/:id"
+    },
+    {
       "source": "/ko/:path*",
       "destination": "/ko/index.html"
     },
