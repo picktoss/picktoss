@@ -91,8 +91,9 @@ const LocaleRedirect = ({ basename }: { basename?: string }) => {
     if (firstSegment === 'ko' || firstSegment === 'en') return
 
     const currentPath = window.location.pathname
+    const trimmedPath = currentPath.replace(/^\/[^/]+/, '')
     // 루트 진입 시에는 /explore로 유도
-    const normalizedPath = currentPath === '/' ? '/explore' : currentPath
+    const normalizedPath = trimmedPath === '' || trimmedPath === '/' ? '/explore' : trimmedPath
     const targetLang = detectPreferredLanguage()
     const target = `/${targetLang}${normalizedPath}${location.search}${location.hash}`
 
