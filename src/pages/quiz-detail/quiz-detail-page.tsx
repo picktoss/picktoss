@@ -109,6 +109,18 @@ const QuizDetailPage = () => {
 
   const [isLoginOpen, setIsLoginOpen] = useState(false)
 
+  const handleBack = () => {
+    const historyIdx = window.history.state?.idx
+    const canGoBack = typeof historyIdx === 'number' ? historyIdx > 0 : window.history.length > 1
+
+    if (canGoBack) {
+      router.back()
+      return
+    }
+
+    router.replace('/explore')
+  }
+
   const handleBookmark = () => {
     if (!document) return
 
@@ -217,7 +229,7 @@ const QuizDetailPage = () => {
   return (
     <div className="relative flex flex-col h-screen bg-base-1">
       <Header
-        left={<BackButton type="close" />}
+        left={<BackButton type="close" onClick={handleBack} />}
         content={
           <div className="w-fit ml-auto">
             {document?.isOwner ? (
