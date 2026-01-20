@@ -15,6 +15,7 @@ import { OXChoiceOption } from '@/features/quiz/ui/ox-choice-option'
 import { QuizSettingDrawer } from '@/features/quiz/ui/quiz-setting-drawer'
 import { ResultIcon } from '@/features/quiz/ui/result-icon'
 
+import { useGetFcmToken } from '@/entities/fcm/api/hooks'
 import { useUpdateQuizNotification, useUser } from '@/entities/member/api/hooks'
 import { CreateDailyQuizRecordResponse, GetAllQuizzesResponse } from '@/entities/quiz/api'
 import { useCreateDailyQuizRecord, useGetConsecutiveSolvedDailyQuiz, useGetQuizzes } from '@/entities/quiz/api/hooks'
@@ -56,6 +57,8 @@ const HomePage = () => {
   // 알림 관련 설정
   const [openNotification, setOpenNotification] = useState(false)
   const { isPWA } = usePWA()
+  const { data: fcmTokenStatus, isFetched: isFcmTokenFetched } = useGetFcmToken()
+  const hasPromptedForMissingFcmTokenRef = useRef(false)
 
   // 메인 퀴즈 상태 관리
   const [quizzes, setQuizzes] = useState<Quiz[]>()
@@ -273,6 +276,20 @@ const HomePage = () => {
       })
     }
   }, [userLoaded, user])
+
+  useEffect(() => {
+    if (!isPWA || !isFcmTokenFetched) return
+    // if (!isPWA || !user || !isFcmTokenFetched) return
+    if (!checkNotificationPermission()) return
+    // if (hasPromptedForMissingFcmTokenRef.current) return
+    // if (typeof window === 'undefined' || !('Notification' in window)) return
+    // if (Notification.permission !== 'granted') return
+
+    if (fcmTokenStatus?.isToken === false) {
+      hasPromptedForMissingFcmTokenRef.current = true
+      setOpenNotification(true)
+    }
+  }, [fcmTokenStatus?.isToken, isFcmTokenFetched, isPWA, user])
 
   if (!user) {
     return null
