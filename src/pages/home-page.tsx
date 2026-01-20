@@ -282,6 +282,7 @@ const HomePage = () => {
     const run = async () => {
       if (!isPWA || !user || !isFcmTokenFetched) return
       if (hasPromptedForMissingFcmTokenRef.current) return
+      if (user.quizNotificationEnabled === false) return
 
       const allowed = await isPushPermissionGranted()
       if (!allowed) return
