@@ -19,9 +19,8 @@ export const useUser = () => {
   return useQuery({
     queryKey: MEMBER_KEYS.getMemberInfo,
     queryFn: () => getMemberInfo(),
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   })
 }
 

@@ -11,3 +11,13 @@ export const saveFcmToken = async ({ data }: { data: SaveFcmTokenRequest }): Pro
   const response = await client.post<void>(FCM_ENDPOINTS.postToken(), data)
   return response.data
 }
+
+// Fcm token 여부 조회
+interface GetFcmTokenResponse {
+  isToken: boolean
+}
+
+export const getFcmToken = async (): Promise<GetFcmTokenResponse> => {
+  const response = await client.get<GetFcmTokenResponse>(FCM_ENDPOINTS.getToken)
+  return response.data
+}

@@ -15,6 +15,7 @@ import { OXChoiceOption } from '@/features/quiz/ui/ox-choice-option'
 import { QuizSettingDrawer } from '@/features/quiz/ui/quiz-setting-drawer'
 import { ResultIcon } from '@/features/quiz/ui/result-icon'
 
+import { useGetFcmToken } from '@/entities/fcm/api/hooks'
 import { useUpdateQuizNotification, useUser } from '@/entities/member/api/hooks'
 import { CreateDailyQuizRecordResponse, GetAllQuizzesResponse } from '@/entities/quiz/api'
 import { useCreateDailyQuizRecord, useGetConsecutiveSolvedDailyQuiz, useGetQuizzes } from '@/entities/quiz/api/hooks'
@@ -32,7 +33,7 @@ import { Text } from '@/shared/components/ui/text'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useMessaging } from '@/shared/hooks/use-messaging'
 import { usePWA } from '@/shared/hooks/use-pwa'
-import { checkNotificationPermission } from '@/shared/lib/notification'
+import { checkNotificationPermission, isPushPermissionGranted } from '@/shared/lib/notification'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { StorageKey } from '@/shared/lib/storage'
 import { useLocalStorage } from '@/shared/lib/storage/model/use-storage'
@@ -56,6 +57,8 @@ const HomePage = () => {
   // 알림 관련 설정
   const [openNotification, setOpenNotification] = useState(false)
   const { isPWA } = usePWA()
+  const { data: fcmTokenStatus, isFetched: isFcmTokenFetched } = useGetFcmToken()
+  const hasPromptedForMissingFcmTokenRef = useRef(false)
 
   // 메인 퀴즈 상태 관리
   const [quizzes, setQuizzes] = useState<Quiz[]>()
@@ -273,6 +276,26 @@ const HomePage = () => {
       })
     }
   }, [userLoaded, user])
+
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      if (!isPWA || !user || !isFcmTokenFetched) return
+      if (hasPromptedForMissingFcmTokenRef.current) return
+
+      const allowed = await isPushPermissionGranted()
+      if (!allowed) return
+
+      if (fcmTokenStatus?.isToken === false && !cancelled) {
+        hasPromptedForMissingFcmTokenRef.current = true
+        setOpenNotification(true)
+      }
+    }
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [fcmTokenStatus?.isToken, isFcmTokenFetched, isPWA, user])
 
   if (!user) {
     return null
