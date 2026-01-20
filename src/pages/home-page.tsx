@@ -504,7 +504,11 @@ const HomePage = () => {
         </HeaderOffsetLayout>
       )}
       {/* 알림 권한 허용 drawer */}
-      <NotificationDrawer open={openNotification} onOpenChange={setOpenNotification} />
+      <NotificationDrawer
+        open={openNotification}
+        onOpenChange={setOpenNotification}
+        isReOpen={hasPromptedForMissingFcmTokenRef.current}
+      />
       <AlertDrawer
         open={rewardDrawerOpen}
         onOpenChange={setRewardDrawerOpen}
@@ -727,7 +731,15 @@ const IncorrectAnswerBody = ({
   )
 }
 
-const NotificationDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChange: (value: boolean) => void }) => {
+const NotificationDrawer = ({
+  open,
+  onOpenChange,
+  isReOpen,
+}: {
+  open: boolean
+  onOpenChange: (value: boolean) => void
+  isReOpen?: boolean
+}) => {
   const { setupMessaging, isReadyNotification } = useMessaging()
   const { mutate: updateNotification } = useUpdateQuizNotification()
   const { t, currentLanguage } = useTranslation()
@@ -738,6 +750,9 @@ const NotificationDrawer = ({ open, onOpenChange }: { open: boolean; onOpenChang
       onOpenChange(false)
     }
     await setupMessaging(callbackAfterPermission)
+    if (typeof window !== 'undefined' && isReOpen) {
+      window.location.reload()
+    }
   }
 
   useEffect(() => {
