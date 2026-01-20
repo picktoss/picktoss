@@ -14,9 +14,10 @@ export const checkNotificationPermission = (): boolean => {
     if (typeof window === 'undefined' || !('Notification' in window)) {
       return false
     }
-    
+
     return (
-      Notification.permission !== 'default' || localStorage.getItem(StorageKey.notificationPermissionComplete) === 'true'
+      Notification.permission !== 'default' ||
+      localStorage.getItem(StorageKey.notificationPermissionComplete) === 'true'
     )
   } catch (error) {
     console.error('checkNotificationPermission failed:', error)
@@ -90,24 +91,21 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
   }
 }
 
-/** 안드로이드용 알림 권한 요청 함수 */
-// export const requestNotificationPermission = async () => {
-//   try {
-//     // 다른 환경에서의 처리
-//     if (Notification.permission === 'default') {
-//       console.log('권한 요청 시도')
+// 권한 요청 전적이 있고, 권한 허용 상태인지 판단하는 함수
+export const isPushPermissionGranted = async () => {
+  if (typeof window === 'undefined' || !('Notification' in window) || !('serviceWorker' in navigator)) return false
+  if (Notification.permission !== 'granted') return false
+  if (localStorage.getItem(StorageKey.notificationPermissionComplete) !== 'true') return false
 
-//       const permission = await Notification.requestPermission()
+  try {
+    const registration = await navigator.serviceWorker.ready
+    if (registration?.pushManager?.permissionState) {
+      const state = await registration.pushManager.permissionState({ userVisibleOnly: true })
+      return state === 'granted'
+    }
+  } catch {
+    return false
+  }
 
-//       console.log(`권한 요청 결과: ${permission}`)
-//       return permission === 'granted'
-//     } else {
-//       console.log(`이미 권한 설정됨: ${Notification.permission}`)
-//       return Notification.permission === 'granted'
-//     }
-//   } catch (error) {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     console.error(`권한 요청 실패: ${error as any}`)
-//     return false
-//   }
-// }
+  return true
+}

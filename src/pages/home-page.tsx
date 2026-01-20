@@ -33,7 +33,7 @@ import { Text } from '@/shared/components/ui/text'
 import { useAmplitude } from '@/shared/hooks/use-amplitude-context'
 import { useMessaging } from '@/shared/hooks/use-messaging'
 import { usePWA } from '@/shared/hooks/use-pwa'
-import { checkNotificationPermission } from '@/shared/lib/notification'
+import { checkNotificationPermission, isPushPermissionGranted } from '@/shared/lib/notification'
 import { useQueryParam, useRouter } from '@/shared/lib/router'
 import { StorageKey } from '@/shared/lib/storage'
 import { useLocalStorage } from '@/shared/lib/storage/model/use-storage'
@@ -278,16 +278,22 @@ const HomePage = () => {
   }, [userLoaded, user])
 
   useEffect(() => {
-    if (!isPWA || !isFcmTokenFetched) return
-    // if (!isPWA || !user || !isFcmTokenFetched) return
-    if (!checkNotificationPermission()) return
-    // if (hasPromptedForMissingFcmTokenRef.current) return
-    // if (typeof window === 'undefined' || !('Notification' in window)) return
-    // if (Notification.permission !== 'granted') return
+    let cancelled = false
+    const run = async () => {
+      if (!isPWA || !user || !isFcmTokenFetched) return
+      if (hasPromptedForMissingFcmTokenRef.current) return
 
-    if (fcmTokenStatus?.isToken === false) {
-      hasPromptedForMissingFcmTokenRef.current = true
-      setOpenNotification(true)
+      const allowed = await isPushPermissionGranted()
+      if (!allowed) return
+
+      if (fcmTokenStatus?.isToken === false && !cancelled) {
+        hasPromptedForMissingFcmTokenRef.current = true
+        setOpenNotification(true)
+      }
+    }
+    run()
+    return () => {
+      cancelled = true
     }
   }, [fcmTokenStatus?.isToken, isFcmTokenFetched, isPWA, user])
 
