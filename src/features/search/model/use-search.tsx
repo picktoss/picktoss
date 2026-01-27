@@ -20,7 +20,16 @@ import { useRecentSearches } from './use-recent-search-keyword'
 export const useSearch = (storageKey: StorageKeyType) => {
   const router = useRouter()
   const [searchParams] = useSearchParams()
-  const [queryParams] = useQueryParam(location.pathname as RouteNames)
+  const normalizeLocalePathname = (pathname: string): Pathname => {
+    const [, maybeLocale, ...rest] = pathname.split('/')
+    if (maybeLocale === 'ko' || maybeLocale === 'en') {
+      const normalized = `/${rest.join('/')}`
+      return (normalized === '/' ? '/' : normalized) as Pathname
+    }
+    return pathname as Pathname
+  }
+  const normalizedPathname = normalizeLocalePathname(location.pathname)
+  const [queryParams] = useQueryParam(normalizedPathname as RouteNames)
   const { t } = useTranslation()
 
   // 스토리지와 연결된 최신 검색어
@@ -68,7 +77,7 @@ export const useSearch = (storageKey: StorageKeyType) => {
    * @param keyword 검색할 키워드
    * @param currentPath 현재 경로 (기본값: 현재 위치)
    */
-  const navigateToSearch = (keyword: string, currentPath: Pathname = location.pathname as Pathname) => {
+  const navigateToSearch = (keyword: string, currentPath: Pathname = normalizedPathname) => {
     router.replace(currentPath, {
       search: { ...queryParams, keyword: keyword ? [keyword] : [] },
     })
