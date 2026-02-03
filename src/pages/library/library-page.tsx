@@ -64,6 +64,8 @@ const LibraryPage = () => {
     () => searchResultsData?.documents.filter((doc) => doc.isBookmarked) ?? [],
     [searchResultsData],
   )
+  const generatedSearchCount = searchResultsMyDocs.length
+  const bookmarkedSearchCount = searchResultsBookmarks.length
 
   const myDocumentResults = keyword ? searchResultsMyDocs : myDocuments
   const bookmarkedDocumentResults = keyword ? searchResultsBookmarks : bookmarkedDocuments
@@ -143,6 +145,7 @@ const LibraryPage = () => {
             changeSelectMode={changeSelectMode}
             checkList={myDocsCheckList}
             keyword={debouncedKeyword}
+            bookmarkedSearchCount={bookmarkedSearchCount}
           />
         )}
 
@@ -154,6 +157,7 @@ const LibraryPage = () => {
             isEmptyBookmarked={isEmptyBookmarked}
             documents={bookmarkedDocumentResults}
             keyword={debouncedKeyword}
+            generatedSearchCount={generatedSearchCount}
           />
         )}
       </HeaderOffsetLayout>

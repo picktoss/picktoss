@@ -314,10 +314,10 @@ const AccountPage = () => {
                 <IcChevronRight className="size-[16px] text-icon-sub" />
               </a>
 
-              <Link to="/account/notice" className="flex items-center justify-between">
+              {/* <Link to="/account/notice" className="flex items-center justify-between">
                 <Text typo="subtitle-2-medium">{t('profile.main_page.notice')}</Text>
                 <IcChevronRight className="size-[16px] text-icon-sub" />
-              </Link>
+              </Link> */}
 
               <a
                 href="https://picktoss.framer.website"

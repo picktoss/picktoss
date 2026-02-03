@@ -26,6 +26,7 @@ interface Props {
   isEmptyBookmarked: boolean
   documents?: GetBookmarkedDocumentsDto[] | SearchDocumentsDto[]
   keyword?: string
+  generatedSearchCount?: number
 }
 
 const BookmarkedNotesContent = ({
@@ -35,6 +36,7 @@ const BookmarkedNotesContent = ({
   isEmptyBookmarked,
   documents,
   keyword,
+  generatedSearchCount,
 }: Props) => {
   type Tab = typeof activeTab
 
@@ -57,13 +59,14 @@ const BookmarkedNotesContent = ({
               className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
               value={'MY' as Tab}
             >
-              {t('library.bookmarked_notes_content.created_count')} {user?.totalQuizCount}
+              {t('library.bookmarked_notes_content.created_count')}{' '}
+              {keyword ? generatedSearchCount : user?.totalQuizCount}
             </TabsTrigger>
             <TabsTrigger
               className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
               value={'BOOKMARK' as Tab}
             >
-              {t('library.bookmarked_notes_content.saved_count')} {user?.bookmarkCount}
+              {t('library.bookmarked_notes_content.saved_count')} {keyword ? documents?.length : user?.bookmarkCount}
             </TabsTrigger>
           </TabsList>
         </Tabs>

@@ -41,6 +41,7 @@ interface Props {
   isEmptyMyDocuments: boolean
   isLoading: boolean
   keyword?: string
+  bookmarkedSearchCount?: number
 }
 
 const MyNotesContent = ({
@@ -53,6 +54,7 @@ const MyNotesContent = ({
   isEmptyMyDocuments,
   isLoading,
   keyword,
+  bookmarkedSearchCount,
 }: Props) => {
   type Tab = typeof activeTab
 
@@ -125,13 +127,13 @@ const MyNotesContent = ({
                 className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
                 value={'MY' as Tab}
               >
-                {t('library.my_notes_content.created_count')} {user?.totalQuizCount}
+                {t('library.my_notes_content.created_count')} {keyword ? documents?.length : user?.totalQuizCount}
               </TabsTrigger>
               <TabsTrigger
                 className="bg-base-3 typo-button-3 text-secondary data-[state=active]:bg-inverse data-[state=active]:text-inverse rounded-full px-[14px] py-[11px]"
                 value={'BOOKMARK' as Tab}
               >
-                {t('library.my_notes_content.saved_count')} {user?.bookmarkCount}
+                {t('library.my_notes_content.saved_count')} {keyword ? bookmarkedSearchCount : user?.bookmarkCount}
               </TabsTrigger>
             </TabsList>
           </Tabs>
