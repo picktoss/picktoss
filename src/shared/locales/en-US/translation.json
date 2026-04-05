@@ -737,6 +737,12 @@
       "message2": "address may have been changed or deleted, so it can’t be found.",
       "title": "We can’t find the page."
     },
+    "service_ended": {
+      "introduction_button": "Service Introduction",
+      "title": "Service Ended",
+      "message1": "The Picktoss service has ended.",
+      "message2": "Thank you for using Picktoss."
+    },
     "onboarding": {
       "complete_button": "Complete",
       "current_field_message": "What are you mainly",

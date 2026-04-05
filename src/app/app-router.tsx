@@ -25,7 +25,6 @@ import StarHistoryPage from '@/pages/account/star-history-page'
 import { LoginPage } from '@/pages/auth'
 import { ExploreComplainPage, ExplorePage, ExploreSearchPage } from '@/pages/explore'
 import ExploreReleasePage from '@/pages/explore/explore-release-page'
-import HomePage from '@/pages/home-page'
 import { InstallGuidePage } from '@/pages/install-guide-page'
 import InviteLoginPage from '@/pages/invite/invite-login-page'
 import InvitePage from '@/pages/invite/invite-page'
@@ -36,6 +35,7 @@ import QuizDetailEditPage from '@/pages/quiz-detail/quiz-detail-edit-page'
 import QuizDetailListPage from '@/pages/quiz-detail/quiz-detail-list-page'
 import QuizDetailPage from '@/pages/quiz-detail/quiz-detail-page'
 import SearchPage from '@/pages/search-page'
+import ServiceClosedPage from '@/pages/service-closed-page'
 
 import { AuthLayout } from '@/app/layout/auth-layout'
 import { RewardLayout } from '@/app/layout/reward-layout'
@@ -45,6 +45,8 @@ import NotFound from '@/app/not-found'
 
 import { RoutePath } from '@/shared/lib/router'
 import { SUPPORTED_LANGUAGE, SUPPORTED_LANGUAGE_VALUE, i18n } from '@/shared/locales/i18n'
+
+export const SERVICE_CLOSED = true
 
 const detectPreferredLanguage = (): SUPPORTED_LANGUAGE_VALUE => {
   if (typeof navigator === 'undefined') return SUPPORTED_LANGUAGE.EN
@@ -92,8 +94,9 @@ const LocaleRedirect = ({ basename }: { basename?: string }) => {
 
     const currentPath = window.location.pathname
     const trimmedPath = currentPath.replace(/^\/[^/]+/, '')
-    // 루트 진입 시에는 /explore로 유도
-    const normalizedPath = trimmedPath === '' || trimmedPath === '/' ? '/explore' : trimmedPath
+    // 루트 진입 시에는 서비스 종료 화면으로 유도
+    const isRoot = currentPath === '' || currentPath === '/'
+    const normalizedPath = isRoot ? '/' : trimmedPath === '' || trimmedPath === '/' ? '/explore' : trimmedPath
     const targetLang = detectPreferredLanguage()
     const target = `/${targetLang}${normalizedPath}${location.search}${location.hash}`
 
@@ -107,16 +110,29 @@ const LocaleRedirect = ({ basename }: { basename?: string }) => {
 export const AppRouter = () => {
   const basename = detectLocaleBase()
 
+  if (SERVICE_CLOSED) {
+    return (
+      <BrowserRouter basename={basename}>
+        <LocaleRedirect basename={basename} />
+        <LocaleSync />
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route path="*" element={<ServiceClosedPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    )
+  }
+
   return (
     <BrowserRouter basename={basename}>
       <LocaleRedirect basename={basename} />
       <LocaleSync />
       <Routes>
         <Route element={<RootLayout />}>
+          <Route path={RoutePath.root} element={<ServiceClosedPage />} />
           <Route element={<RewardLayout />}>
             <Route element={<AuthLayout />}>
-              {/* Home */}
-              <Route path={RoutePath.root} element={<HomePage />} />
               <Route path={RoutePath.search} element={<SearchPage />} />
 
               {/* Note Create 노트 생성 */}

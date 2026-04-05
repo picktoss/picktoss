@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { isDesktop, isMobile } from 'react-device-detect'
 
+import { SERVICE_CLOSED } from '@/app/app-router'
+
 import { IcClose } from '@/shared/assets/icon'
 import { ImgPush, ImgPushEng } from '@/shared/assets/images'
 import { Text } from '@/shared/components/ui/text'
@@ -22,6 +24,8 @@ export const useSideAppDownloadPopup = () => {
       setIsSideAppDownloadPopupOpen(false)
     }
   }, [isPWA, isMobile, isDesktopSize])
+
+  if (SERVICE_CLOSED) return null
 
   if (isSideAppDownloadPopupOpen) {
     return (
